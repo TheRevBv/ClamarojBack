@@ -1,18 +1,31 @@
 using System.Text;
-using ApiWithAuth;
-using ClamarojBack.Data;
+using ClamarojBack.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-var mykey = "my_secret_key_12345"; // TODO: Change this to a more secure key
 
-// Add services to the container.
-builder.Services.AddDbContext<UsersContext>();
-builder.Services.AddScoped<TokenService, TokenService>();
+//=====Cors Rules
+var misReglasCors = "ReglasCorsAngular";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: misReglasCors,
+        builder =>
+    {
+        builder.WithOrigins("http://localhost:4200")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
+// Add services to the container, en este caso los dbContext
 builder.Services.AddControllers();
+builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
+            );
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(option =>
@@ -21,7 +34,7 @@ builder.Services.AddSwaggerGen(option =>
     option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         In = ParameterLocation.Header,
-        Description = "Please enter a valid token",
+        Description = "Ingresa un token valido",
         Name = "Authorization",
         Type = SecuritySchemeType.Http,
         BearerFormat = "JWT",
@@ -43,37 +56,28 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters()
-        {
-            ClockSkew = TimeSpan.Zero,
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = "apiWithAuthBackend",
-            ValidAudience = "apiWithAuthBackend",
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(mykey)                
-            ),
-        };
-    });
+builder.Configuration.AddJsonFile("appsettings.json");
+var secretKey = builder.Configuration.GetSection("JWT").GetSection("Key").ToString();
+var keyInBytes = Encoding.UTF8.GetBytes(secretKey!);
 
-builder.Services
-    .AddIdentityCore<IdentityUser>(options =>
+builder.Services.AddAuthentication(config =>
+{
+    config.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    config.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+}).AddJwtBearer(config =>
+{
+    config.RequireHttpsMetadata = false;
+    config.SaveToken = true;
+    config.TokenValidationParameters = new TokenValidationParameters
     {
-        options.SignIn.RequireConfirmedAccount = false;
-        options.User.RequireUniqueEmail = true;
-        options.Password.RequireDigit = false;
-        options.Password.RequiredLength = 6;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = false;
-        options.Password.RequireLowercase = false;
-    })
-    .AddEntityFrameworkStores<UsersContext>();
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(keyInBytes),
+        ValidateIssuer = false,
+        ValidateAudience = false
+    };
+
+});
 
 
 var app = builder.Build();
@@ -84,6 +88,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(misReglasCors);
 
 app.UseHttpsRedirection();
 
