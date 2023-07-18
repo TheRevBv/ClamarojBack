@@ -1,27 +1,22 @@
-﻿using System.Reflection.Metadata;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClamarojBack.Models
 {
-    public class Usuario
+    public class Cliente
     {
         [Key]
-        public int Id { get; set; }
+        public int IdCliente { get; set; }
         public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public string Direccion { get; set; } = string.Empty;
+        [Phone]
+        public string Telefono { get; set; } = string.Empty;
         [Required, EmailAddress]
         public string Correo { get; set; } = string.Empty;
         [Required, MinLength(8), RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$"), DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
-        //Imagen en base64
         public string Foto { get; set; } = string.Empty;
-        [DataType(DataType.Date)]
-        public DateTime FechaNacimiento { get; set; } = DateTime.Now;
+        public string Rfc { get; set; } = string.Empty;
         public int IdStatus { get; set; } = 1;
-        public ICollection<RolUsuario> RolesUsuario { get; set; } = new List<RolUsuario>();
-
     }
 }
-
