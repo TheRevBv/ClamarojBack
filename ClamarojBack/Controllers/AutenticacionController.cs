@@ -17,7 +17,7 @@ namespace ClamarojBack.Controllers
 {
     [EnableCors("ReglasCorsAngular")]
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     [ApiController]
     public class AutenticacionController : Controller
     {

@@ -18,7 +18,7 @@ namespace ClamarojBack.Models
         //Imagen en base64
         public string Foto { get; set; } = string.Empty;
         [DataType(DataType.Date)]
-        public DateTime FechaNacimiento { get; set; } = DateTime.Now;
+        public DateTime FechaNacimiento { get; set; } = Convert.ToDateTime("01/01/1900");
         public int IdStatus { get; set; } = 1;
         public ICollection<RolUsuario> RolesUsuario { get; set; } = new List<RolUsuario>();
 
