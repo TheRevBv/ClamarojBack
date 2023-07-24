@@ -6,14 +6,16 @@ namespace ClamarojBack.Models
     {
         [Key]
         public int IdReceta { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string Descripcion { get; set; } = string.Empty;
+        [MaxLength(10)]
+        public string Codigo { get; set; } = string.Empty;
+        [MaxLength(45)]
+        public int IdProducto { get; set; }
+        public Producto Producto { get; set; } = new Producto();
+        public int IdMateriaPrima { get; set; }
+        public MateriaPrima MateriaPrima { get; set; } = new MateriaPrima();
+        public decimal Cantidad { get; set; } = 0;
         public int IdStatus { get; set; } = 1;
-        //TODO: Completar las recetas
-        // public int IdInsumo { get; set; }
-        // public Insumo Insumo { get; set; } = new Insumo();
-        // [DataType(DataType.Currency)]
-        // public decimal Precio { get; set; } = 0;
-
+        public DateTime FechaRegistro { get; set; } = DateTime.Now;
+        public DateTime FechaModificacion { get; set; } = DateTime.Now;
     }
 }

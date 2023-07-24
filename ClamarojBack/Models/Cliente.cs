@@ -6,17 +6,14 @@ namespace ClamarojBack.Models
     {
         [Key]
         public int IdCliente { get; set; }
-        public string Nombre { get; set; } = string.Empty;
-        public string Apellido { get; set; } = string.Empty;
+        public int IdUsuario { get; set; }
+        public Usuario Usuario { get; set; } = new Usuario();
+        [MaxLength(45)]
         public string Direccion { get; set; } = string.Empty;
-        [Phone]
+        [Phone, MaxLength(13)]
         public string Telefono { get; set; } = string.Empty;
-        [Required, EmailAddress]
-        public string Correo { get; set; } = string.Empty;
-        [Required, MinLength(8), RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$"), DataType(DataType.Password)]
-        public string Password { get; set; } = string.Empty;
-        public string Foto { get; set; } = string.Empty;
+
+        [MaxLength(13)]
         public string Rfc { get; set; } = string.Empty;
-        public int IdStatus { get; set; } = 1;
     }
 }

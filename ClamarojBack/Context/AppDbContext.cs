@@ -10,13 +10,14 @@ namespace ClamarojBack.Context
         public DbSet<Rol> Roles { get; set; } = null!;
         public DbSet<RolUsuario> RolesUsuarios { get; set; } = null!;
         public DbSet<Estatus> Estatus { get; set; } = null!;
-        public DbSet<Insumo> Insumos { get; set; } = null!;
+        public DbSet<MateriaPrima> MateriasPrimas { get; set; } = null!;
         public DbSet<Proveedor> Proveedores { get; set; } = null!;
         public DbSet<Cliente> Clientes { get; set; } = null!;
         public DbSet<Producto> Productos { get; set; } = null!;
         public DbSet<Receta> Recetas { get; set; } = null!;
         public DbSet<UnidadMedida> UnidadesMedida { get; set; } = null!;
-        // public DbSet<DetalleReceta> DetallesReceta { get; set; } = null!;        
+        public DbSet<Pedido> Pedidos { get; set; } = null!;
+        public DbSet<DetallePedido> DetallePedidos { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,40 +37,84 @@ namespace ClamarojBack.Context
             modelBuilder.Entity<Rol>()
                 .HasIndex(r => r.Nombre)
                 .IsUnique();
+            modelBuilder.Entity<Proveedor>()
+                .HasOne(p => p.Usuario)          // Un Proveedor tiene un Usuario asociado
+                .WithOne(u => u.Proveedor)      // Un Usuario está asociado a un Proveedor
+                .HasForeignKey<Proveedor>(p => p.IdUsuario);  // La clave foránea está en la entidad Proveedor
+            // Relación uno a uno entre Cliente y Usuario
+            modelBuilder.Entity<Cliente>()
+                .HasOne(c => c.Usuario)          // Un Cliente tiene un Usuario asociado
+                .WithOne(u => u.Cliente)        // Un Usuario está asociado a un Cliente
+                .HasForeignKey<Cliente>(c => c.IdUsuario);
             modelBuilder.Entity<Estatus>()
                 .HasIndex(e => e.Nombre)
                 .IsUnique();
-            modelBuilder.Entity<Insumo>()
-                .HasIndex(i => i.Nombre)
+            modelBuilder.Entity<MateriaPrima>()
+                .HasIndex(mp => mp.Codigo)
                 .IsUnique();
             modelBuilder.Entity<Proveedor>()
-                .HasIndex(p => p.RazonSocial)
-                .IsUnique();
-            modelBuilder.Entity<Proveedor>()
-                .HasIndex(p => p.Correo)
+                .HasIndex(p => p.Rfc)
                 .IsUnique();
             modelBuilder.Entity<Cliente>()
-                .HasIndex(c => c.Correo)
+                .HasIndex(c => c.Rfc)
                 .IsUnique();
             modelBuilder.Entity<Producto>()
-                .HasIndex(p => p.Nombre)
+                .HasIndex(p => p.Codigo)
                 .IsUnique();
             modelBuilder.Entity<Receta>()
-                .HasIndex(r => r.Nombre)
+                .HasIndex(r => r.Codigo)
                 .IsUnique();
             modelBuilder.Entity<UnidadMedida>()
-                .HasIndex(u => u.Nombre)
+                .HasIndex(um => um.Nombre)
                 .IsUnique();
-            // modelBuilder.Entity<DetalleReceta>()
-            //     .HasKey(dr => new { dr.IdReceta, dr.IdInsumo });
-            // modelBuilder.Entity<DetalleReceta>()
-            //     .HasOne(dr => dr.Receta)
-            //     .WithMany(r => r.DetallesReceta)
-            //     .HasForeignKey(dr => dr.IdReceta);
-            // modelBuilder.Entity<DetalleReceta>()
-            //     .HasOne(dr => dr.Insumo)
-            //     .WithMany(i => i.DetallesReceta)
-            //     .HasForeignKey(dr => dr.IdInsumo);
+            modelBuilder.Entity<Usuario>()
+                .HasMany(u => u.Pedidos) // Un Usuario tiene muchos Pedidos
+                .WithOne(p => p.Usuario) // Un Pedido pertenece a un Usuario
+                .HasForeignKey(p => p.IdUsuario)
+                .OnDelete(DeleteBehavior.Restrict);
+            // modelBuilder.Entity<Pedido>()
+            //     .HasOne(p => p.Usuario)
+            //     .WithMany(u => u.Pedidos)
+            //     .HasForeignKey(p => p.IdUsuario);
+            //TODO: Revisar si es necesario
+            /* modelBuilder.Entity<Pedido>()
+                .HasOne(p => p.Estatus)
+                .WithMany(e => e.Pedidos)
+                .HasForeignKey(p => p.IdStatus);
+            modelBuilder.Entity<DetallePedido>()
+                .HasKey(dp => new { dp.IdPedido, dp.IdProducto });
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.Pedido)
+                .WithMany(p => p.DetallePedidos)
+                .HasForeignKey(dp => dp.IdPedido);
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.Producto)
+                .WithMany(p => p.DetallePedidos)
+                .HasForeignKey(dp => dp.IdProducto);
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.UnidadMedida)
+                .WithMany(um => um.DetallePedidos)
+                .HasForeignKey(dp => dp.IdUnidadMedida);
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.MateriaPrima)
+                .WithMany(mp => mp.DetallePedidos)
+                .HasForeignKey(dp => dp.IdMateriaPrima);
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.Proveedor)
+                .WithMany(p => p.DetallePedidos)
+                .HasForeignKey(dp => dp.IdProveedor);
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.Cliente)
+                .WithMany(c => c.DetallePedidos)
+                .HasForeignKey(dp => dp.IdCliente);
+            modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.Receta)
+                .WithMany(r => r.DetallePedidos)
+                .HasForeignKey(dp => dp.IdReceta);
+                modelBuilder.Entity<DetallePedido>()
+                .HasOne(dp => dp.Producto)
+                .WithMany(p => p.DetallePedidos)
+                .HasForeignKey(dp => dp.IdProducto); */
         }
     }
 }
