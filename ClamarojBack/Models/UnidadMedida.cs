@@ -6,10 +6,11 @@ namespace ClamarojBack.Models
     {
         [Key]
         public int IdUnidadMedida { get; set; }
-        [MaxLength(45)]
+        [StringLength(45)]
         public string Nombre { get; set; } = string.Empty;
-        [MaxLength(45)]
+        [StringLength(120)]
         public string Descripcion { get; set; } = string.Empty;
         public int IdStatus { get; set; } = 1;
+        public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
     }
 }

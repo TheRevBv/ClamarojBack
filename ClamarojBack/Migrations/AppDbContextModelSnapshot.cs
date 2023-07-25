@@ -45,8 +45,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Telefono")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdCliente");
 
@@ -65,7 +65,10 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdDetallePedido"));
 
                     b.Property<decimal>("Cantidad")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IdMateriaPrima")
                         .HasColumnType("int");
@@ -79,28 +82,21 @@ namespace ClamarojBack.Migrations
                     b.Property<int>("IdUnidadMedida")
                         .HasColumnType("int");
 
-                    b.Property<int>("MateriaPrimaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PedidoIdPedido")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("PrecioUnitario")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("ProductoIdProducto")
-                        .HasColumnType("int");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<decimal>("Subtotal")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("IdDetallePedido");
 
-                    b.HasIndex("MateriaPrimaId");
+                    b.HasIndex("IdMateriaPrima");
 
-                    b.HasIndex("PedidoIdPedido");
+                    b.HasIndex("IdProducto");
 
-                    b.HasIndex("ProductoIdProducto");
+                    b.HasIndex("IdUnidadMedida");
+
+                    b.HasIndex("IdPedido", "Fecha");
 
                     b.ToTable("DetallePedidos");
                 });
@@ -147,8 +143,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<DateTime>("FechaModificacion")
                         .HasColumnType("datetime2");
@@ -178,7 +174,7 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Precio")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<int>("ProveedorIdProveedor")
                         .HasColumnType("int");
@@ -204,21 +200,15 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.Pedido", b =>
                 {
                     b.Property<int>("IdPedido")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdPedido"));
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Domicilio")
                         .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
-
-                    b.Property<int>("EstatusId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -236,30 +226,30 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Telefono")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("TipoEnvio")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("TipoPago")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<string>("TipoPedido")
                         .IsRequired()
-                        .HasMaxLength(3)
-                        .HasColumnType("nvarchar(3)");
+                        .HasMaxLength(4)
+                        .HasColumnType("nvarchar(4)");
 
                     b.Property<decimal>("Total")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
-                    b.HasKey("IdPedido");
+                    b.HasKey("IdPedido", "Fecha");
 
-                    b.HasIndex("EstatusId");
+                    b.HasIndex("IdStatus");
 
                     b.HasIndex("IdUsuario");
 
@@ -281,8 +271,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<DateTime>("FechaModificacion")
                         .HasColumnType("datetime2");
@@ -298,7 +288,7 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("Merma")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
@@ -306,7 +296,7 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("nvarchar(45)");
 
                     b.Property<decimal>("Precio")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(18,4)");
 
                     b.HasKey("IdProducto");
 
@@ -344,8 +334,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Telefono")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("nvarchar(13)");
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.HasKey("IdProveedor");
 
@@ -367,7 +357,7 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdReceta"));
 
                     b.Property<decimal>("Cantidad")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
@@ -384,7 +374,6 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("IdProducto")
-                        .HasMaxLength(45)
                         .HasColumnType("int");
 
                     b.Property<int>("IdStatus")
@@ -442,9 +431,6 @@ namespace ClamarojBack.Migrations
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.HasKey("IdRol", "IdUsuario");
 
                     b.HasIndex("IdUsuario");
@@ -462,8 +448,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -520,15 +506,10 @@ namespace ClamarojBack.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("PedidoIdPedido")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Correo")
                         .IsUnique();
-
-                    b.HasIndex("PedidoIdPedido");
 
                     b.ToTable("Usuarios");
                 });
@@ -547,28 +528,37 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.DetallePedido", b =>
                 {
                     b.HasOne("ClamarojBack.Models.MateriaPrima", "MateriaPrima")
-                        .WithMany()
-                        .HasForeignKey("MateriaPrimaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ClamarojBack.Models.Pedido", "Pedido")
-                        .WithMany()
-                        .HasForeignKey("PedidoIdPedido")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("DetallePedidos")
+                        .HasForeignKey("IdMateriaPrima")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClamarojBack.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoIdProducto")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("DetallePedidos")
+                        .HasForeignKey("IdProducto")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("ClamarojBack.Models.UnidadMedida", "UnidadMedida")
+                        .WithMany("DetallePedidos")
+                        .HasForeignKey("IdUnidadMedida")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ClamarojBack.Models.Pedido", "Pedido")
+                        .WithMany("DetallesPedidos")
+                        .HasForeignKey("IdPedido", "Fecha")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_DetallePedido_Pedido");
 
                     b.Navigation("MateriaPrima");
 
                     b.Navigation("Pedido");
 
                     b.Navigation("Producto");
+
+                    b.Navigation("UnidadMedida");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.MateriaPrima", b =>
@@ -593,15 +583,15 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.Pedido", b =>
                 {
                     b.HasOne("ClamarojBack.Models.Estatus", "Estatus")
-                        .WithMany()
-                        .HasForeignKey("EstatusId")
+                        .WithMany("Pedidos")
+                        .HasForeignKey("IdStatus")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ClamarojBack.Models.Usuario", "Usuario")
                         .WithMany("Pedidos")
                         .HasForeignKey("IdUsuario")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Estatus");
@@ -658,18 +648,34 @@ namespace ClamarojBack.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ClamarojBack.Models.Usuario", b =>
+            modelBuilder.Entity("ClamarojBack.Models.Estatus", b =>
                 {
-                    b.HasOne("ClamarojBack.Models.Pedido", "Pedido")
-                        .WithMany()
-                        .HasForeignKey("PedidoIdPedido");
+                    b.Navigation("Pedidos");
+                });
 
-                    b.Navigation("Pedido");
+            modelBuilder.Entity("ClamarojBack.Models.MateriaPrima", b =>
+                {
+                    b.Navigation("DetallePedidos");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Pedido", b =>
+                {
+                    b.Navigation("DetallesPedidos");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Producto", b =>
+                {
+                    b.Navigation("DetallePedidos");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Rol", b =>
                 {
                     b.Navigation("RolesUsuario");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.UnidadMedida", b =>
+                {
+                    b.Navigation("DetallePedidos");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Usuario", b =>

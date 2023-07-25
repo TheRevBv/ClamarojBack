@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClamarojBack.Models
 {
@@ -6,11 +8,11 @@ namespace ClamarojBack.Models
     {
         [Key]
         public int Id { get; set; }
-        [MaxLength(10)]
+        [StringLength(10)]
         public string Codigo { get; set; } = string.Empty;
-        [MaxLength(45)]
+        [StringLength(45)]
         public string Nombre { get; set; } = string.Empty;
-        [MaxLength(100)]
+        [StringLength(120)]
         public string Descripcion { get; set; } = string.Empty;
         public int Perecedero { get; set; } = 0; // 0 = No, 1 = Si, || Dias de caducidad
         public int Stock { get; set; } = 0;
@@ -18,13 +20,14 @@ namespace ClamarojBack.Models
         public int CantMaxima { get; set; } = 0;
         public int IdUnidadMedida { get; set; }
         public UnidadMedida UnidadMedida { get; set; } = new UnidadMedida();
-        [DataType(DataType.Currency)]
+        [Column(TypeName = "decimal(18,4)")]
         public decimal Precio { get; set; } = 0;
-        public byte[] Foto { get; set; } = new byte[0];
+        public byte[] Foto { get; set; } = Array.Empty<byte>();
         public int IdProveedor { get; set; }
         public Proveedor Proveedor { get; set; } = new Proveedor();
         public int IdStatus { get; set; } = 1;
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
+        public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
     }
 }

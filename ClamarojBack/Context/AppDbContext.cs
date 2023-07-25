@@ -64,54 +64,41 @@ namespace ClamarojBack.Context
             modelBuilder.Entity<UnidadMedida>()
                 .HasIndex(um => um.Nombre)
                 .IsUnique();
-            modelBuilder.Entity<Usuario>()
-                .HasMany(u => u.Pedidos) // Un Usuario tiene muchos Pedidos
-                .WithOne(p => p.Usuario) // Un Pedido pertenece a un Usuario
-                .HasForeignKey(p => p.IdUsuario)
-                .OnDelete(DeleteBehavior.Restrict);
-            // modelBuilder.Entity<Pedido>()
-            //     .HasOne(p => p.Usuario)
-            //     .WithMany(u => u.Pedidos)
-            //     .HasForeignKey(p => p.IdUsuario);
-            //TODO: Revisar si es necesario
-            /* modelBuilder.Entity<Pedido>()
+            modelBuilder.Entity<Pedido>()
+                .HasKey(p => new { p.IdPedido, p.Fecha });
+            modelBuilder.Entity<Pedido>()
+                .HasOne(p => p.Usuario)
+                .WithMany(u => u.Pedidos)
+                .HasForeignKey(p => p.IdUsuario);
+            modelBuilder.Entity<Pedido>()
                 .HasOne(p => p.Estatus)
                 .WithMany(e => e.Pedidos)
                 .HasForeignKey(p => p.IdStatus);
             modelBuilder.Entity<DetallePedido>()
-                .HasKey(dp => new { dp.IdPedido, dp.IdProducto });
-            modelBuilder.Entity<DetallePedido>()
                 .HasOne(dp => dp.Pedido)
-                .WithMany(p => p.DetallePedidos)
-                .HasForeignKey(dp => dp.IdPedido);
+                .WithMany(p => p.DetallesPedidos)
+                //Agrega la llave foranea compuesta a la tabla DetallePedido
+                .HasForeignKey(dp => new { dp.IdPedido, dp.Fecha })                
+                .OnDelete(DeleteBehavior.Restrict)
+                .HasConstraintName("FK_DetallePedido_Pedido");
             modelBuilder.Entity<DetallePedido>()
                 .HasOne(dp => dp.Producto)
                 .WithMany(p => p.DetallePedidos)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasForeignKey(dp => dp.IdProducto);
             modelBuilder.Entity<DetallePedido>()
                 .HasOne(dp => dp.UnidadMedida)
                 .WithMany(um => um.DetallePedidos)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasForeignKey(dp => dp.IdUnidadMedida);
             modelBuilder.Entity<DetallePedido>()
                 .HasOne(dp => dp.MateriaPrima)
                 .WithMany(mp => mp.DetallePedidos)
+                .OnDelete(DeleteBehavior.Restrict)
                 .HasForeignKey(dp => dp.IdMateriaPrima);
-            modelBuilder.Entity<DetallePedido>()
-                .HasOne(dp => dp.Proveedor)
-                .WithMany(p => p.DetallePedidos)
-                .HasForeignKey(dp => dp.IdProveedor);
-            modelBuilder.Entity<DetallePedido>()
-                .HasOne(dp => dp.Cliente)
-                .WithMany(c => c.DetallePedidos)
-                .HasForeignKey(dp => dp.IdCliente);
-            modelBuilder.Entity<DetallePedido>()
-                .HasOne(dp => dp.Receta)
-                .WithMany(r => r.DetallePedidos)
-                .HasForeignKey(dp => dp.IdReceta);
-                modelBuilder.Entity<DetallePedido>()
-                .HasOne(dp => dp.Producto)
-                .WithMany(p => p.DetallePedidos)
-                .HasForeignKey(dp => dp.IdProducto); */
+
+            //TODO: Revisar si es necesario
+            /*  */
         }
     }
 }
