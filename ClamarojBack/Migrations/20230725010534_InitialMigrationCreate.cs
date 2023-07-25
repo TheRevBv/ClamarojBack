@@ -296,12 +296,6 @@ namespace ClamarojBack.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Clientes_Rfc",
-                table: "Clientes",
-                column: "Rfc",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_DetallePedidos_MateriaPrimaId",
                 table: "DetallePedidos",
                 column: "MateriaPrimaId");
@@ -361,9 +355,9 @@ namespace ClamarojBack.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Proveedores_Rfc",
+                name: "IX_Proveedores_RazonSocial",
                 table: "Proveedores",
-                column: "Rfc",
+                column: "RazonSocial",
                 unique: true);
 
             migrationBuilder.CreateIndex(

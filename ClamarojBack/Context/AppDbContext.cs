@@ -53,10 +53,7 @@ namespace ClamarojBack.Context
                 .HasIndex(mp => mp.Codigo)
                 .IsUnique();
             modelBuilder.Entity<Proveedor>()
-                .HasIndex(p => p.Rfc)
-                .IsUnique();
-            modelBuilder.Entity<Cliente>()
-                .HasIndex(c => c.Rfc)
+                .HasIndex(p => p.RazonSocial)
                 .IsUnique();
             modelBuilder.Entity<Producto>()
                 .HasIndex(p => p.Codigo)

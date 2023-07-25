@@ -111,8 +111,8 @@ namespace ClamarojBack
                 endpoints.MapControllers();
             });
 
-            var seeder = new Seeders(app.ApplicationServices.GetRequiredService<AppDbContext>());
-            seeder.Seed();
+            //var seeder = new Seeders(app.ApplicationServices.GetRequiredService<AppDbContext>());
+            //seeder.Seed();
         }
     }
 }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230724103948_InitialMigrationCreate")]
+    [Migration("20230725010534_InitialMigrationCreate")]
     partial class InitialMigrationCreate
     {
         /// <inheritdoc />
@@ -54,9 +54,6 @@ namespace ClamarojBack.Migrations
                     b.HasKey("IdCliente");
 
                     b.HasIndex("IdUsuario")
-                        .IsUnique();
-
-                    b.HasIndex("Rfc")
                         .IsUnique();
 
                     b.ToTable("Clientes");
@@ -358,7 +355,7 @@ namespace ClamarojBack.Migrations
                     b.HasIndex("IdUsuario")
                         .IsUnique();
 
-                    b.HasIndex("Rfc")
+                    b.HasIndex("RazonSocial")
                         .IsUnique();
 
                     b.ToTable("Proveedores");

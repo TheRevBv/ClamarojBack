@@ -18,7 +18,7 @@ public class Program
             dbContext.Database.Migrate();
 
             // Llamar al seeder aquí
-            Seeders seeder = new Seeders(dbContext);
+            Seeders seeder = new(dbContext);
             seeder.Seed();
         }
 

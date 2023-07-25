@@ -34,5 +34,9 @@
 
   <ItemGroup>
     <None Remove="Models\" />
+    <None Remove="Utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Utils\" />
   </ItemGroup>
 </Project>

@@ -1,16 +1,16 @@
 ﻿using System;
 using ClamarojBack.Context;
 using ClamarojBack.Models;
+using ClamarojBack.Utils;
 
 namespace ClamarojBack
 {
     public class Seeders
     {
         private readonly AppDbContext context;
-
         public Seeders(AppDbContext _context)
         {
-            this.context = _context;
+            context = _context;
         }
 
         public void Seed()
@@ -53,33 +53,15 @@ namespace ClamarojBack
 
         private void SeedUsuarios()
         {
+            SecurityUtil security = new();
+
             context.Usuarios.AddRange(
                 new Usuario
                 {
                     Nombre = "Administrador",
                     Apellido = "Administrador",
                     Correo = "admin@clamaroj.com",
-                    Password = "Admin123",
-                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
-                    FechaRegistro = DateTime.Now,
-                    IdStatus = 1
-                },
-                new Usuario
-                {
-                    Nombre = "Cliente",
-                    Apellido = "Cliente",
-                    Correo = "clienteprueba@test.com",
-                    Password = "Cliente123",
-                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
-                    FechaRegistro = DateTime.Now,
-                    IdStatus = 1
-                },
-                new Usuario
-                {
-                    Nombre = "Proveedor",
-                    Apellido = "Proveedor",
-                    Correo = "proveedortest@test.com",
-                    Password = "Proveedor123",
+                    Password = security.HashPassword("Admin123"),
                     FechaNacimiento = Convert.ToDateTime("01/01/1900"),
                     FechaRegistro = DateTime.Now,
                     IdStatus = 1
@@ -90,29 +72,60 @@ namespace ClamarojBack
 
         private void SeedProveedores()
         {
-            context.Proveedores.AddRange(
-                new Proveedor
-                {
-                    IdUsuario = 3,
-                    Rfc = "XAXX010101000",
-                    RazonSocial = "Proveedor de prueba",
-                    Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
-                    Telefono = "1234567890",
-                });
+            SecurityUtil security = new();
+
+            var proveedor = new Proveedor
+            {
+                Rfc = "XAXX010101000",
+                RazonSocial = "Proveedor de prueba",
+                Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
+                Telefono = "1234567890",
+            };
+
+            var proveedorUsuario = new Usuario
+            {
+                Nombre = "Proveedor",
+                Apellido = "Proveedor",
+                Correo = "proveedortest@test.com",
+                Password = security.HashPassword("Proveedor123"),
+                FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                FechaRegistro = DateTime.Now,
+                IdStatus = 1
+            };
+
+            proveedor.Usuario = proveedorUsuario;
+
+            context.Proveedores.Add(proveedor);
             context.SaveChanges();
         }
 
         private void SeedClientes()
         {
-            context.Clientes.AddRange(
-                new Cliente
-                {
-                    IdUsuario = 2,
-                    Rfc = "XAXX010101000",
-                    Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
-                    Telefono = "1234567890",
-                });
+            SecurityUtil security = new();
+
+            var cliente = new Cliente
+            {
+                Rfc = "XAXX010101000",
+                Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
+                Telefono = "1234567890",
+            };
+
+            var clienteUsuario = new Usuario
+            {
+                Nombre = "Cliente",
+                Apellido = "Cliente",
+                Correo = "clienteprueba@test.com",
+                Password = security.HashPassword("Cliente123"),
+                FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                FechaRegistro = DateTime.Now,
+                IdStatus = 1
+            };
+
+            cliente.Usuario = clienteUsuario;
+
+            context.Clientes.Add(cliente);
             context.SaveChanges();
+
         }
 
     }

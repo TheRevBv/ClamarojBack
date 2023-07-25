@@ -53,9 +53,6 @@ namespace ClamarojBack.Migrations
                     b.HasIndex("IdUsuario")
                         .IsUnique();
 
-                    b.HasIndex("Rfc")
-                        .IsUnique();
-
                     b.ToTable("Clientes");
                 });
 
@@ -355,7 +352,7 @@ namespace ClamarojBack.Migrations
                     b.HasIndex("IdUsuario")
                         .IsUnique();
 
-                    b.HasIndex("Rfc")
+                    b.HasIndex("RazonSocial")
                         .IsUnique();
 
                     b.ToTable("Proveedores");
