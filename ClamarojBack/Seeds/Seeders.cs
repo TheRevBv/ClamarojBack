@@ -21,6 +21,7 @@ namespace ClamarojBack
             SeedUsuarios();
             SeedProveedores();
             SeedClientes();
+            SeedRolesUsuarios();
             // SeedMateriasPrimas();
             // SeedUnidadesMedida();
             // SeedProductos();
@@ -142,5 +143,48 @@ namespace ClamarojBack
                 context.SaveChanges();
             }
         }
+
+        private void SeedRolesUsuarios()
+        {
+            // Verificar si la tabla RolesUsuarios ya tiene registros
+            if (!context.RolesUsuarios.Any())
+            {
+                // Obtener los roles y usuarios existentes en la base de datos
+                var roles = context.Roles.ToList();
+                var usuarios = context.Usuarios.ToList();
+
+                // Asignar roles a usuarios si existen en la base de datos
+                var rolUsuarioList = new List<RolUsuario>();
+
+                // Verificar si los roles y usuarios están presentes en la base de datos
+                var adminRole = roles.FirstOrDefault(r => r.Nombre == "Administrador");
+                var clienteRole = roles.FirstOrDefault(r => r.Nombre == "Cliente");
+                var proveedorRole = roles.FirstOrDefault(r => r.Nombre == "Proveedor");
+
+                var adminUsuario = usuarios.FirstOrDefault(u => u.Correo == "admin@clamaroj.com");
+                var clienteUsuario = usuarios.FirstOrDefault(u => u.Correo == "clienteprueba@test.com");
+                var proveedorUsuario = usuarios.FirstOrDefault(u => u.Correo == "proveedortest@test.com");
+
+                if (adminRole != null && adminUsuario != null)
+                {
+                    rolUsuarioList.Add(new RolUsuario { IdRol = adminRole.Id, IdUsuario = adminUsuario.Id, Rol = adminRole, Usuario = adminUsuario });
+                }
+
+                if (clienteRole != null && clienteUsuario != null)
+                {
+                    rolUsuarioList.Add(new RolUsuario { IdRol = clienteRole.Id, IdUsuario = clienteUsuario.Id, Rol = clienteRole, Usuario = clienteUsuario });
+                }
+
+                if (proveedorRole != null && proveedorUsuario != null)
+                {
+                    rolUsuarioList.Add(new RolUsuario { IdRol = proveedorRole.Id, IdUsuario = proveedorUsuario.Id, Rol = proveedorRole, Usuario = proveedorUsuario });
+                }
+
+                // Agregar los registros a la tabla RolesUsuarios y guardar cambios
+                context.RolesUsuarios.AddRange(rolUsuarioList);
+                context.SaveChanges();
+            }
+        }
+
     }
 }

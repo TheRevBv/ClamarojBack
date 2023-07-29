@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
 using ClamarojBack.Models.Responses;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace ClamarojBack.Controllers
 {
@@ -34,39 +30,34 @@ namespace ClamarojBack.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] Login login)
+        public async Task<IActionResult> Login([FromBody] Login login)
         {
             IActionResult response = StatusCode(401, "Usuario o contraseña incorrectos");
-            var user = AutenticarUsuario(login);
+            var user = await AutenticarUsuario(login);
             if (user != null)
             {
-                var roles = context.RolesUsuarios.Where(ru => ru.IdUsuario == user.Id).ToList();
-                // var rol = context.Roles.Where(r => r.Id == roles[0].IdRol).ToList();
-                var listaRoles = new List<IRolRes>();
-                // var listaRolId = new List<int>();
-                roles.ForEach(r =>
-                {
-                    var rol = context.Roles.Where(i => i.Id == r.IdRol).FirstOrDefault();
-                    listaRoles.Add(new IRolRes
-                    {
-                        Id = rol.Id,
-                        Nombre = rol.Nombre,
-                        Descripcion = rol.Descripcion
-                    });
-                });
+                var tokenString = GenerarToken(user);
+                // var rolesUsuario = await context.RolesUsuarios.Where(ru => ru.IdUsuario == user.Id).ToListAsync();
+                // int[] roles = rolesUsuario.Select(ru => ru.IdRol).ToArray();
+                var roles2 = await context.RolesUsuarios
+                .Where(ru => ru.IdUsuario == user.Id)
+                .Join(context.Roles, ru => ru.IdRol, r => r.Id, (ru, r) => new IRolRes { Id = r.Id, Nombre = r.Nombre, Descripcion = r.Descripcion })
+                .ToListAsync();
+
                 var usuario = new IUsuarioRes
                 {
                     Id = user.Id,
                     Nombre = user.Nombre,
-                    Correo = user.Correo,
                     Apellido = user.Apellido,
+                    Correo = user.Correo,
+                    Foto = user.Foto,
                     FechaNacimiento = user.FechaNacimiento,
                     FechaRegistro = user.FechaRegistro,
-                    Foto = user.Foto,
                     IdStatus = user.IdStatus,
-                    Roles = listaRoles
+                    // Roles = roles
+                    Roles = roles2
                 };
-                var tokenString = GenerarToken(user);
+
                 response = StatusCode(200, new { token = tokenString, usuario });
             }
             return response;
@@ -90,41 +81,56 @@ namespace ClamarojBack.Controllers
             return response;
         }
 
-        private Usuario AutenticarUsuario(Login login)
+        private async Task<Usuario?> AutenticarUsuario(Login login)
         {
-            Usuario? usuario = null;
-            var encriptador = new SecurityUtil();
-            if (login.Correo == "" || login.Password == "" || login.Correo == null || login.Password == null)
+            try
             {
-                return usuario;
+                // IUsuarioRes? usuario = null;
+                var encriptador = new SecurityUtil();
+                if (login.Correo == "" || login.Password == "" || login.Correo == null || login.Password == null)
+                {
+                    return null;
+                }
+                //Encriptar password
+                var contrasena = encriptador.HashPassword(login.Password);
+
+                var usuarioEncontrado = await context.Usuarios.Where(u => u.Correo == login.Correo && u.Password == contrasena).FirstOrDefaultAsync();
+
+
+                if (usuarioEncontrado != null)
+                {
+                    return usuarioEncontrado;
+                }
+                return null;
             }
-            //Encriptar password
-            var contrasena = encriptador.HashPassword(login.Password);
-
-            var usuarioEncontrado = context.Usuarios.Where(u => u.Correo == login.Correo && u.Password == contrasena).FirstOrDefault();
-
-            if (usuarioEncontrado != null)
+            catch (System.Exception ex)
             {
-                usuario = usuarioEncontrado;
+                throw ex;
             }
-            return usuario;
         }
 
         private string GenerarToken(Usuario usuario)
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var llave = Encoding.ASCII.GetBytes(mySecretKey);
-            var tokenDescriptor = new SecurityTokenDescriptor
+            try
             {
-                Subject = new ClaimsIdentity(new Claim[]
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var llave = Encoding.ASCII.GetBytes(mySecretKey);
+                var tokenDescriptor = new SecurityTokenDescriptor
                 {
-                    new Claim(ClaimTypes.NameIdentifier, usuario.Correo),
-                }),
-                Expires = DateTime.UtcNow.AddMinutes(30),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, usuario.Correo!),
+                    }),
+                    Expires = DateTime.UtcNow.AddDays(1),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return tokenHandler.WriteToken(token);
+            }
+            catch (System.Exception ex)
+            {
+                throw ex;
+            }
         }
 
     }

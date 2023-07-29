@@ -11,7 +11,7 @@
         public DateTime? FechaNacimiento { get; set; }
         public DateTime? FechaRegistro { get; set; }
         public int? IdStatus { get; set; }
-        // public List<int> Roles { get; set; }
         public List<IRolRes>? Roles { get; set; }
+        // public int[]? Roles { get; set; }
     }
 }
