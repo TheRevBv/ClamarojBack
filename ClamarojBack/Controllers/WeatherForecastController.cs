@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClamarojBack.Controllers
 {
+    [EnableCors("ReglasCorsAngular")]
     [ApiController]
     [Route("[controller]")]
     //[Authorize]

@@ -2,6 +2,7 @@
 using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
+using System.Linq; // Add this namespace for querying the database.
 
 namespace ClamarojBack
 {
@@ -30,104 +31,116 @@ namespace ClamarojBack
 
         private void SeedEstatus()
         {
-            context.Estatus.AddRange(
-                new Estatus { Nombre = "Activo" },
-                new Estatus { Nombre = "Inactivo" },
-                new Estatus { Nombre = "Pendiente" },
-                new Estatus { Nombre = "Enviado" },
-                new Estatus { Nombre = "Entregado" },
-                new Estatus { Nombre = "Cancelado" }
-            );
-            context.SaveChanges();
+            if (!context.Estatus.Any())
+            {
+                context.Estatus.AddRange(
+                    new Estatus { Nombre = "Activo" },
+                    new Estatus { Nombre = "Inactivo" },
+                    new Estatus { Nombre = "Pendiente" },
+                    new Estatus { Nombre = "Enviado" },
+                    new Estatus { Nombre = "Entregado" },
+                    new Estatus { Nombre = "Cancelado" }
+                );
+                context.SaveChanges();
+            }
         }
 
         private void SeedRoles()
         {
-            context.Roles.AddRange(
-                new Rol { Nombre = "Administrador" },
-                new Rol { Nombre = "Cliente" },
-                new Rol { Nombre = "Proveedor" }
-            );
-            context.SaveChanges();
+            if (!context.Roles.Any())
+            {
+                context.Roles.AddRange(
+                    new Rol { Nombre = "Administrador" },
+                    new Rol { Nombre = "Cliente" },
+                    new Rol { Nombre = "Proveedor" }
+                );
+                context.SaveChanges();
+            }
         }
 
         private void SeedUsuarios()
         {
-            SecurityUtil security = new();
+            if (!context.Usuarios.Any(u => u.Correo == "admin@clamaroj.com"))
+            {
+                SecurityUtil security = new();
 
-            context.Usuarios.AddRange(
-                new Usuario
-                {
-                    Nombre = "Administrador",
-                    Apellido = "Administrador",
-                    Correo = "admin@clamaroj.com",
-                    Password = security.HashPassword("Admin123"),
-                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
-                    FechaRegistro = DateTime.Now,
-                    IdStatus = 1
-                }
-            );
-            context.SaveChanges();
+                context.Usuarios.Add(
+                    new Usuario
+                    {
+                        Nombre = "Administrador",
+                        Apellido = "Administrador",
+                        Correo = "admin@clamaroj.com",
+                        Password = security.HashPassword("Admin123"),
+                        FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                        FechaRegistro = DateTime.Now,
+                        IdStatus = 1
+                    }
+                );
+                context.SaveChanges();
+            }
         }
 
         private void SeedProveedores()
         {
-            SecurityUtil security = new();
-
-            var proveedor = new Proveedor
+            if (!context.Usuarios.Any(u => u.Correo == "proveedortest@test.com"))
             {
-                Rfc = "XAXX010101000",
-                RazonSocial = "Proveedor de prueba",
-                Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
-                Telefono = "1234567890",
-            };
+                SecurityUtil security = new();
 
-            var proveedorUsuario = new Usuario
-            {
-                Nombre = "Proveedor",
-                Apellido = "Proveedor",
-                Correo = "proveedortest@test.com",
-                Password = security.HashPassword("Proveedor123"),
-                FechaNacimiento = Convert.ToDateTime("01/01/1900"),
-                FechaRegistro = DateTime.Now,
-                IdStatus = 1
-            };
+                var proveedor = new Proveedor
+                {
+                    Rfc = "XAXX010101000",
+                    RazonSocial = "Proveedor de prueba",
+                    Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
+                    Telefono = "1234567890",
+                };
 
-            proveedor.Usuario = proveedorUsuario;
+                var proveedorUsuario = new Usuario
+                {
+                    Nombre = "Proveedor",
+                    Apellido = "Proveedor",
+                    Correo = "proveedortest@test.com",
+                    Password = security.HashPassword("Proveedor123"),
+                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                    FechaRegistro = DateTime.Now,
+                    IdStatus = 1
+                };
 
-            context.Proveedores.Add(proveedor);
-            context.SaveChanges();
+                proveedor.Usuario = proveedorUsuario;
+
+                context.Proveedores.Add(proveedor);
+                context.SaveChanges();
+            }
         }
 
         private void SeedClientes()
         {
-            SecurityUtil security = new();
-
-            var cliente = new Cliente
+            if (!context.Usuarios.Any(u => u.Correo == "clienteprueba@test.com"))
             {
-                Rfc = "XAXX010101000",
-                Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
-                Telefono = "1234567890",
-            };
+                SecurityUtil security = new();
 
-            var clienteUsuario = new Usuario
-            {
-                Nombre = "Cliente",
-                Apellido = "Cliente",
-                Correo = "clienteprueba@test.com",
-                Password = security.HashPassword("Cliente123"),
-                FechaNacimiento = Convert.ToDateTime("01/01/1900"),
-                FechaRegistro = DateTime.Now,
-                IdStatus = 1
-            };
+                var cliente = new Cliente
+                {
+                    Rfc = "XAXX010101000",
+                    Direccion = "Calle 1 # 1, Colonia 1, Ciudad 1, Estado 1",
+                    Telefono = "1234567890",
+                };
 
-            cliente.Usuario = clienteUsuario;
+                var clienteUsuario = new Usuario
+                {
+                    Nombre = "Cliente",
+                    Apellido = "Cliente",
+                    Correo = "clienteprueba@test.com",
+                    Password = security.HashPassword("Cliente123"),
+                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                    FechaRegistro = DateTime.Now,
+                    IdStatus = 1
+                };
 
-            context.Clientes.Add(cliente);
-            context.SaveChanges();
+                cliente.Usuario = clienteUsuario;
 
+                context.Clientes.Add(cliente);
+                context.SaveChanges();
+            }
         }
-
     }
 }
-

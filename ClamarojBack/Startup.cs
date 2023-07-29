@@ -1,3 +1,4 @@
+//Startup.cs
 using System.Text;
 using ClamarojBack.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -91,20 +92,22 @@ namespace ClamarojBack
 
         public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, IWebHostEnvironment env)
         {
+            Console.WriteLine("COnfigure inicializado");
+
             if (env.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseCors("ReglasCorsAngular");
 
             app.UseHttpsRedirection();
 
+            app.UseRouting();
+
             app.UseAuthentication();
             app.UseAuthorization();
-
-            app.UseRouting();
+            app.UseCors("ReglasCorsAngular");
 
             app.UseEndpoints(endpoints =>
             {

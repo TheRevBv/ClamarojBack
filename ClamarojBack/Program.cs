@@ -2,6 +2,7 @@
 using ClamarojBack;
 using ClamarojBack.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 public class Program
 {
@@ -20,6 +21,7 @@ public class Program
             // Llamar al seeder aquí
             Seeders seeder = new(dbContext);
             seeder.Seed();
+
         }
 
         host.Run();
