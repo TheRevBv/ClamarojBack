@@ -22,7 +22,8 @@ namespace ClamarojBack.Models
         public UnidadMedida UnidadMedida { get; set; } = new UnidadMedida();
         [Column(TypeName = "decimal(18,4)")]
         public decimal Precio { get; set; } = 0;
-        public byte[] Foto { get; set; } = Array.Empty<byte>();
+        [Column(TypeName = "TEXT")]
+        public string Foto { get; set; } = string.Empty;
         public int IdProveedor { get; set; }
         public Proveedor Proveedor { get; set; } = new Proveedor();
         public int IdStatus { get; set; } = 1;

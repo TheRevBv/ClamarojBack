@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230725162941_TipadoRelacionFix")]
-    partial class TipadoRelacionFix
+    [Migration("20230730210350_TipadoImagen")]
+    partial class TipadoImagen
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -155,9 +155,9 @@ namespace ClamarojBack.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte[]>("Foto")
+                    b.Property<string>("Foto")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("IdProveedor")
                         .HasColumnType("int");
@@ -283,9 +283,9 @@ namespace ClamarojBack.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte[]>("Foto")
+                    b.Property<string>("Foto")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -493,9 +493,9 @@ namespace ClamarojBack.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
 
-                    b.Property<byte[]>("Foto")
+                    b.Property<string>("Foto")
                         .IsRequired()
-                        .HasColumnType("varbinary(max)");
+                        .HasColumnType("TEXT");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");

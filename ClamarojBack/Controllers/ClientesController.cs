@@ -39,7 +39,7 @@ namespace ClamarojBack.Controllers
             }
 
             //var clientes = JsonConvert.SerializeObject(sqlUtil.CallSqlFunctionData("GetClientes", null));
-
+            //Consulta usando LINQ para traer los datos de la tabla Clientes y Usuarios
             var clientes = await _context.Clientes.Join(_context.Usuarios,
                 client => client.IdUsuario,
                 user => user.Id,
@@ -51,51 +51,12 @@ namespace ClamarojBack.Controllers
                     Correo = user.Correo,
                     Foto = user.Foto,
                     FechaNacimiento = user.FechaNacimiento,
+                    FechaRegistro = user.FechaRegistro,
                     Telefono = client.Telefono,
                     Direccion = client.Direccion,
                     Rfc = client.Rfc,
                     IdStatus = user.IdStatus,
-                    //TODO: Roles
-                    // }).Join(_context.RolesUsuarios,
-                    // client => client.IdUsuario,
-                    // role => role.IdUsuario,
-                    // (client, role) => new IClientesRes
-                    // {
-                    //     IdCliente = client.IdCliente,
-                    //     Nombre = client.Nombre,
-                    //     Apellido = client.Apellido,
-                    //     Correo = client.Correo,
-                    //     Foto = client.Foto,
-                    //     FechaNacimiento = client.FechaNacimiento,
-                    //     Telefono = client.Telefono,
-                    //     Direccion = client.Direccion,
-                    //     Rfc = client.Rfc,
-                    //     IdStatus = client.IdStatus,
-                    //     Roles = _context.Roles.Where(r => r.Id == role.IdRol).Select(r => new IRolRes
-                    //     {
-                    //         Id = r.Id,
-                    //         Nombre = r.Nombre,
-                    //         Descripcion = r.Descripcion
-                    //     }).ToList()
                 }).ToListAsync();
-
-            // .ToListAsync();
-
-
-            //Crear consulta para solo traer los clientes con la informacion de su usuario relacionado
-            // // var clientes = await _context.Clientes.ToListAsync();
-            //  var clientesList = new List<IClientesRes>();
-            //clientes.ForEach(cliente =>
-            //{
-            //  var usuario = _context.Usuarios.Find(cliente.IdUsuario);
-            //    clientesList.Add(new IClientesRes
-            //    {
-            //        Id = cliente.IdCliente,
-            //        Nombre = usuario!.Nombre,
-            //        Apellido = usuario.Apellido,
-            //    });
-
-            //});
 
             return Ok(clientes);
 
@@ -104,20 +65,38 @@ namespace ClamarojBack.Controllers
 
         // GET: api/Clientes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cliente>> GetCliente(int id)
+        public async Task<ActionResult<IClientesRes>> GetCliente(int id)
         {
             if (_context.Clientes == null)
             {
                 return NotFound();
             }
-            var cliente = await _context.Clientes.FindAsync(id);
+            // var cliente = await _context.Clientes.FindAsync(id);
+            //Consulta de datos usando LINQ
+            var clienteRes = await _context.Clientes.Join(_context.Usuarios,
+                client => client.IdUsuario,
+                user => user.Id,
+                (client, user) => new IClientesRes
+                {
+                    IdCliente = client.IdCliente,
+                    Nombre = user.Nombre,
+                    Apellido = user.Apellido,
+                    Correo = user.Correo,
+                    Foto = user.Foto,
+                    FechaNacimiento = user.FechaNacimiento,
+                    FechaRegistro = user.FechaRegistro,
+                    Telefono = client.Telefono,
+                    Direccion = client.Direccion,
+                    Rfc = client.Rfc,
+                    IdStatus = user.IdStatus,
+                }).FirstOrDefaultAsync(cliente => cliente.IdCliente == id);
 
-            if (cliente == null)
+            if (clienteRes == null)
             {
                 return NotFound();
             }
 
-            return cliente;
+            return Ok(clienteRes);
         }
 
         // PUT: api/Clientes/5
@@ -154,16 +133,36 @@ namespace ClamarojBack.Controllers
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente cliente)
+        public async Task<ActionResult<Cliente>> PostCliente(Cliente client)
         {
             if (_context.Clientes == null)
             {
                 return Problem("Entity set 'AppDbContext.Clientes'  is null.");
             }
-            _context.Clientes.Add(cliente);
+            _context.Clientes.Add(client);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCliente", new { id = cliente.IdCliente }, cliente);
+            //Traer el cliente recien creado
+            var clienteRes = await _context.Clientes.Join(_context.Usuarios,
+                client => client.IdUsuario,
+                user => user.Id,
+                (client, user) => new IClientesRes
+                {
+                    IdCliente = client.IdCliente,
+                    Nombre = user.Nombre,
+                    Apellido = user.Apellido,
+                    Correo = user.Correo,
+                    Foto = user.Foto,
+                    FechaNacimiento = user.FechaNacimiento,
+                    FechaRegistro = user.FechaRegistro,
+                    Telefono = client.Telefono,
+                    Direccion = client.Direccion,
+                    Rfc = client.Rfc,
+                    IdStatus = user.IdStatus,
+                }).FirstOrDefaultAsync(cliente => cliente.IdCliente == client.IdCliente);
+
+
+            return Ok(clienteRes);
         }
 
         // DELETE: api/Clientes/5

@@ -16,7 +16,8 @@ namespace ClamarojBack.Models
         public string Descripcion { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,4)")]
         public decimal Precio { get; set; } = 0;
-        public byte[] Foto { get; set; } = Array.Empty<byte>();
+        [Column(TypeName = "TEXT")]
+        public string Foto { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,4)")]
         public decimal Merma { get; set; } = 0;
         public int IdStatus { get; set; } = 1;

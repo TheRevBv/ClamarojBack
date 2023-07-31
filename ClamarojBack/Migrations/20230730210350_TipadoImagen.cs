@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ClamarojBack.Migrations
 {
     /// <inheritdoc />
-    public partial class TipadoRelacionFix : Migration
+    public partial class TipadoImagen : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,7 @@ namespace ClamarojBack.Migrations
                     Nombre = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     Descripcion = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
                     Precio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    Foto = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Foto = table.Column<string>(type: "TEXT", nullable: false),
                     Merma = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
                     FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -84,7 +84,7 @@ namespace ClamarojBack.Migrations
                     Apellido = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     Correo = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Foto = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Foto = table.Column<string>(type: "TEXT", nullable: false),
                     FechaNacimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false)
@@ -213,7 +213,7 @@ namespace ClamarojBack.Migrations
                     IdUnidadMedida = table.Column<int>(type: "int", nullable: false),
                     UnidadMedidaIdUnidadMedida = table.Column<int>(type: "int", nullable: false),
                     Precio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    Foto = table.Column<byte[]>(type: "varbinary(max)", nullable: false),
+                    Foto = table.Column<string>(type: "TEXT", nullable: false),
                     IdProveedor = table.Column<int>(type: "int", nullable: false),
                     ProveedorIdProveedor = table.Column<int>(type: "int", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
