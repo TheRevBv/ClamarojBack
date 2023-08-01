@@ -16,7 +16,7 @@ namespace ClamarojBack.Models
         public string Apellido { get; set; } = string.Empty;
         [Required, EmailAddress]
         public string Correo { get; set; } = string.Empty;
-        [Required, MinLength(8), RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,15}$"), DataType(DataType.Password)]
+        [Required, MinLength(8), DataType(DataType.Password)]
         public string Password { get; set; } = string.Empty;
         //Imagen de perfil
         [Column(TypeName = "TEXT")]
