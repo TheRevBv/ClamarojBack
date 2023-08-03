@@ -13,7 +13,6 @@ using Newtonsoft.Json;
 using System.Linq;
 using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
-using ClamarojBack.Dtos;
 
 namespace ClamarojBack.Controllers
 {
