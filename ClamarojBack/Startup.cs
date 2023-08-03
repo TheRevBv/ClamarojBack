@@ -19,6 +19,7 @@ namespace ClamarojBack
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(Configuration);
             //=====Cors Rules
             var misReglasCors = "ReglasCorsAngular";
             services.AddCors(options =>
