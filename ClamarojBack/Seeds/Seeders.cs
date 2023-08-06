@@ -22,9 +22,9 @@ namespace ClamarojBack
             SeedProveedores();
             SeedClientes();
             SeedRolesUsuarios();
-            // SeedMateriasPrimas();
-            // SeedUnidadesMedida();
-            // SeedProductos();
+            SeedUnidadesMedida();
+            SeedMateriasPrimas();
+            SeedProductos();
             // SeedRecetas();
             // SeedPedidos();
             // SeedDetallePedidos();		
@@ -182,6 +182,76 @@ namespace ClamarojBack
 
                 // Agregar los registros a la tabla RolesUsuarios y guardar cambios
                 context.RolesUsuarios.AddRange(rolUsuarioList);
+                context.SaveChanges();
+            }
+        }
+
+        private void SeedMateriasPrimas()
+        {
+            if (!context.MateriasPrimas.Any())
+            {
+                var unidadesMedida = context.UnidadesMedida.ToList();
+                var proveedores = context.Proveedores.ToList();
+
+                var unidadMedida = unidadesMedida.FirstOrDefault(r => r.IdUnidadMedida == 1);
+                var proveedor = proveedores.FirstOrDefault(r => r.IdProveedor == 1);
+
+                context.MateriasPrimas.Add(
+                new MateriaPrima
+                {
+                    Codigo = "EJEMPLOM",
+                    Nombre = "Materia Prima Test",
+                    Descripcion = "Ejemplo",
+                    Perecedero = 10,
+                    Stock = 10,
+                    CantMinima = 5,
+                    CantMaxima = 100,
+                    IdUnidadMedida = 1, //KG
+                    UnidadMedida = unidadMedida,
+                    Precio = 50,
+                    IdProveedor = 1,
+                    Proveedor = proveedor,
+                    FechaRegistro = DateTime.Now,
+                    IdStatus = 1
+                }
+            );
+                context.SaveChanges();
+            }
+        }
+
+        private void SeedUnidadesMedida()
+        {
+            if (!context.UnidadesMedida.Any())
+            {
+                    context.UnidadesMedida.Add(
+                    new UnidadMedida
+                    {
+                        Nombre = "KG",
+                        Descripcion = "Kilogramos",
+                        IdStatus = 1
+                    }
+                );
+                context.SaveChanges();
+            }
+        }
+
+        private void SeedProductos()
+        {
+            if (!context.Productos.Any())
+            {
+
+                context.Productos.Add(
+                new Producto
+                {
+                    Codigo = "EJEMPLOP",
+                    Nombre = "Producto Test",
+                    Descripcion = "Ejemplo",
+                    Precio = 50,
+                    Merma = 4,
+                    FechaRegistro = DateTime.Now,
+                    IdStatus = 1
+                }
+            );
                 context.SaveChanges();
             }
         }

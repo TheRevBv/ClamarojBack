@@ -37,4 +37,8 @@
     <None Remove="Models\" />
     <None Remove="Utils\" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Shared\" />
+  </ItemGroup>
 </Project>
