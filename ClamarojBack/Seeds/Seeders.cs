@@ -23,7 +23,7 @@ namespace ClamarojBack
             SeedClientes();
             SeedRolesUsuarios();
             // SeedMateriasPrimas();
-            // SeedUnidadesMedida();
+            SeedUnidadesMedida();
             // SeedProductos();
             // SeedRecetas();
             // SeedPedidos();
@@ -186,5 +186,20 @@ namespace ClamarojBack
             }
         }
 
+        private void SeedUnidadesMedida()
+        {
+            if (!context.UnidadesMedida.Any())
+            {
+                context.UnidadesMedida.AddRange(
+                    new UnidadMedida { Nombre = "Kilogramo", Descripcion = "kg" },
+                    new UnidadMedida { Nombre = "Gramo", Descripcion = "g" },
+                    new UnidadMedida { Nombre = "Litro", Descripcion = "l" },
+                    new UnidadMedida { Nombre = "Mililitro", Descripcion = "ml" },
+                    new UnidadMedida { Nombre = "Pieza", Descripcion = "pz" },
+                    new UnidadMedida { Nombre = "Caja", Descripcion = "caja" }
+                );
+                context.SaveChanges();
+            }
+        }
     }
 }

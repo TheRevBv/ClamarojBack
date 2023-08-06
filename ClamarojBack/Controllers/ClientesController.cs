@@ -9,10 +9,12 @@ using ClamarojBack.Context;
 using ClamarojBack.Models;
 using Microsoft.AspNetCore.Authorization;
 using ClamarojBack.Models.Responses;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Linq;
 using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
+using ClamarojBack.Dtos;
 
 namespace ClamarojBack.Controllers
 {
@@ -24,129 +26,127 @@ namespace ClamarojBack.Controllers
     public class ClientesController : ControllerBase
     {
         private readonly AppDbContext _context;
-        //private readonly SqlUtil sqlUtil;
+        private readonly SqlUtil _sqlUtil;
 
-        public ClientesController(AppDbContext context)//, SqlUtil _sqlUtil
+        public ClientesController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
-            //sqlUtil = _sqlUtil;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Clientes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cliente>>> GetClientes()
+        public async Task<ActionResult<IEnumerable<ClientesDto>>> GetClientes()
         {
             if (_context.Clientes == null)
             {
                 return NotFound();
             }
 
-            //var clientes = JsonConvert.SerializeObject(sqlUtil.CallSqlFunctionData("GetClientes", null));
-            //Consulta usando LINQ para traer los datos de la tabla Clientes y Usuarios
-            var clientes = await _context.Clientes.Join(_context.Usuarios,
-                client => client.IdUsuario,
-                user => user.Id,
-                (client, user) => new IClientesRes
+            var clientes = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetClientes", null);
+            var clientesRes = clientes.Select(
+                c => new ClientesDto
                 {
-                    IdCliente = client.IdCliente,
-                    Nombre = user.Nombre,
-                    Apellido = user.Apellido,
-                    Correo = user.Correo,
-                    Foto = user.Foto,
-                    FechaNacimiento = user.FechaNacimiento,
-                    FechaRegistro = user.FechaRegistro,
-                    Telefono = client.Telefono,
-                    Direccion = client.Direccion,
-                    Rfc = client.Rfc,
-                    IdStatus = user.IdStatus,
-                }).ToListAsync();
+                    IdCliente = Convert.ToInt32(c["IdCliente"]),
+                    Nombre = c["Nombre"].ToString(),
+                    Apellido = c["Apellido"].ToString(),
+                    Rfc = c["Rfc"].ToString(),
+                    Telefono = c["Telefono"].ToString(),
+                    Direccion = c["Direccion"].ToString(),
+                    IdStatus = Convert.ToInt32(c["IdStatus"])
+                }).ToList();
 
-            return Ok(clientes);
+
+            return Ok(clientesRes);
 
 
         }
 
         // GET: api/Clientes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<IClientesRes>> GetCliente(int id)
+        public async Task<ActionResult<ClienteDto>> GetCliente(int id)
         {
             if (_context.Clientes == null)
             {
                 return NotFound();
             }
-            // var cliente = await _context.Clientes.FindAsync(id);
-            //Consulta de datos usando LINQ
-            var clienteRes = await _context.Clientes.Join(_context.Usuarios,
-                client => client.IdUsuario,
-                user => user.Id,
-                (client, user) => new
+            // var cliente = await _context.Clientes.FindAsync(id);            
+            var cliente = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetCliente",
+            new SqlParameter[] {
+                new SqlParameter("@Id", id)
+            });
+
+            var clienteDto = cliente.Select(
+                c => new ClienteDto
                 {
-                    client.IdCliente,
-                    client.Telefono,
-                    client.Direccion,
-                    client.Rfc,
-                    usuario = new
+                    IdCliente = Convert.ToInt32(c["IdCliente"]),
+                    Rfc = c["Rfc"].ToString(),
+                    Telefono = c["Telefono"].ToString(),
+                    Direccion = c["Direccion"].ToString(),
+                    Usuario = new UsuarioDto
                     {
-                        user.Id,
-                        user.Nombre,
-                        user.Apellido,
-                        user.Correo,
-                        user.Password,
-                        user.Foto,
-                        user.FechaNacimiento,
-                        user.FechaRegistro,
-                        user.IdStatus
-                    }
-                }).FirstOrDefaultAsync(cliente => cliente.IdCliente == id);
+                        Id = Convert.ToInt32(c["IdUsuario"]),
+                        Nombre = c["Nombre"].ToString(),
+                        Apellido = c["Apellido"].ToString(),
+                        Foto = c["Foto"].ToString(),
+                        Correo = c["Correo"].ToString(),
+                        Password = c["Password"].ToString(),
+                        IdStatus = Convert.ToInt32(c["IdStatus"]),
+                        FechaNacimiento = Convert.ToDateTime(c["FechaNacimiento"])
+                    },
+                }).FirstOrDefault();
 
-
-            if (clienteRes == null)
+            if (clienteDto == null)
             {
                 return NotFound();
             }
 
-            return Ok(clienteRes);
+            return Ok(clienteDto);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCliente(int id, Cliente clienteDTO)
         {
+            var encriptador = new SecurityUtil();
             if (id != clienteDTO.IdCliente)
             {
                 return BadRequest();
             }
 
-            var clienteDB = await _context.Clientes.FindAsync(id);
+            var clienteDB = await _context.Clientes.Include(c => c.Usuario).FirstOrDefaultAsync(c => c.IdCliente == id);
 
             if (clienteDB == null)
             {
                 return NotFound();
             }
 
-            clienteDB.Telefono = clienteDTO.Telefono;
-            clienteDB.Direccion = clienteDTO.Direccion;
-            clienteDB.Rfc = clienteDTO.Rfc;
-
-            var usuarioDB = await _context.Usuarios.FindAsync(clienteDB.IdUsuario);
-
-            if (usuarioDB == null)
+            if (clienteDTO.Usuario.Password != clienteDB.Usuario.Password)
             {
-                return NotFound();
+                clienteDTO.Usuario.Password = encriptador.HashPassword(clienteDTO.Usuario.Password);
             }
-
-            usuarioDB.Nombre = clienteDTO.Usuario.Nombre;
-            usuarioDB.Apellido = clienteDTO.Usuario.Apellido;
-            usuarioDB.Correo = clienteDTO.Usuario.Correo;
-            usuarioDB.Foto = clienteDTO.Usuario.Foto;
-            usuarioDB.FechaNacimiento = clienteDTO.Usuario.FechaNacimiento;
-            usuarioDB.IdStatus = clienteDTO.Usuario.IdStatus;
-
-            _context.Entry(clienteDB).State = EntityState.Modified;
-            _context.Entry(usuarioDB).State = EntityState.Modified;
+            else
+            {
+                clienteDTO.Usuario.Password = clienteDB.Usuario.Password;
+            }
+            DateTime fechaNacimiento = Convert.ToDateTime(clienteDTO.Usuario.FechaNacimiento);
 
             try
             {
-                await _context.SaveChangesAsync();
+                // await _context.SaveChangesAsync();
+                await _sqlUtil.CallSqlProcedureAsync("dbo.ClientesUPD", new SqlParameter[]{
+                    new SqlParameter("@Id", id),
+                    new SqlParameter("@IdUsuario", clienteDTO.Usuario.Id),
+                    new SqlParameter("@Telefono", clienteDTO.Telefono),
+                    new SqlParameter("@Direccion", clienteDTO.Direccion),
+                    new SqlParameter("@Rfc", clienteDTO.Rfc),
+                    new SqlParameter("@Nombre", clienteDTO.Usuario.Nombre),
+                    new SqlParameter("@Apellido", clienteDTO.Usuario.Apellido),
+                    new SqlParameter("@Correo", clienteDTO.Usuario.Correo),
+                    new SqlParameter("@Password", clienteDTO.Usuario.Password),
+                    new SqlParameter("@Foto", clienteDTO.Usuario.Foto),
+                    new SqlParameter("@FechaNacimiento", fechaNacimiento),
+                    new SqlParameter("@IdStatus", clienteDTO.Usuario.IdStatus),
+                });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -160,130 +160,65 @@ namespace ClamarojBack.Controllers
                 }
             }
             //Traer el cliente recien creado
-            var clienteRes = await _context.Clientes.Join(_context.Usuarios,
-                client => client.IdUsuario,
-                user => user.Id,
-                (client, user) => new IClientesRes
-                {
-                    IdCliente = client.IdCliente,
-                    Nombre = user.Nombre,
-                    Apellido = user.Apellido,
-                    Correo = user.Correo,
-                    Foto = user.Foto,
-                    FechaNacimiento = user.FechaNacimiento,
-                    FechaRegistro = user.FechaRegistro,
-                    Telefono = client.Telefono,
-                    Direccion = client.Direccion,
-                    Rfc = client.Rfc,
-                    IdStatus = user.IdStatus,
-                }).FirstOrDefaultAsync(clienteR => clienteR.IdCliente == clienteDB.IdCliente);
+            var clienteRes = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetCliente", new SqlParameter[]{
+                new SqlParameter("@Id", id)
+            });
 
             return Ok(clienteRes);
         }
 
-        /*
-        // PUT: api/Clientes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCliente(int id, Cliente cliente)
-        {
-            if (id != cliente.IdCliente)
-            {
-                return BadRequest();
-            }
-            //Ignorar el update de la contraseña del usuario
-            //var clienteDTO = new ClienteUpdateDTO
-            //{
-            //    IdCliente = cliente.IdCliente,
-            //    IdUsuario = cliente.IdUsuario,
-            //    Telefono = cliente.Telefono,
-            //    Direccion = cliente.Direccion,
-            //    Rfc = cliente.Rfc,
-            //    Usuario = new UsuarioUpdateDTO
-            //    {
-            //        Id = cliente.Usuario.Id,
-            //        Nombre = cliente.Usuario.Nombre,
-            //        Apellido = cliente.Usuario.Apellido,
-            //        Correo = cliente.Usuario.Correo,
-            //        Foto = cliente.Usuario.Foto,
-            //        FechaNacimiento = cliente.Usuario.FechaNacimiento,
-            //        FechaRegistro = cliente.Usuario.FechaRegistro,
-            //        IdStatus = cliente.Usuario.IdStatus,
-            //    }
-            //};
-            //var clienteDTO = new
-            //{
-            //    cliente.IdCliente,
-            //    cliente.Direccion,
-            //    cliente.Telefono,
-            //    cliente.Rfc,
-            //    usuario = new
-            //    {
-            //        cliente.Usuario.Id,
-            //        cliente.Usuario.Nombre,
-            //        cliente.Usuario.Apellido,
-            //        cliente.Usuario.Correo,
-            //        cliente.Usuario.Foto,
-            //        cliente.Usuario.FechaNacimiento,                    
-            //        cliente.Usuario.IdStatus,
-            //    }
-            //};
-
-
-            try
-            {
-                //_context.Entry(cliente).State = EntityState.Modified;
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ClienteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-        */
-
         // POST: api/Clientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Cliente>> PostCliente(Cliente client)
+        public async Task<ActionResult<ClienteDto>> PostCliente(Cliente client)
         {
             var encriptador = new SecurityUtil();
             if (_context.Clientes == null)
             {
                 return Problem("Entity set 'AppDbContext.Clientes'  is null.");
             }
-            client.Usuario.Password = encriptador.HashPassword(client.Usuario.Password);
-            _context.Clientes.Add(client);
-            await _context.SaveChangesAsync();
+            DateTime fechaNacimiento = Convert.ToDateTime(client.Usuario.FechaNacimiento);
 
-            //Traer el cliente recien creado
-            var clienteRes = await _context.Clientes.Join(_context.Usuarios,
+            await _sqlUtil.CallSqlProcedureAsync("dbo.ClientesUPD",
+            new SqlParameter[] {
+                new SqlParameter("@Id", client.IdCliente),
+                new SqlParameter("@Telefono", client.Telefono),
+                new SqlParameter("@Direccion", client.Direccion),
+                new SqlParameter("@Rfc", client.Rfc),
+                new SqlParameter("@Nombre", client.Usuario.Nombre),
+                new SqlParameter("@Apellido", client.Usuario.Apellido),
+                new SqlParameter("@Correo", client.Usuario.Correo),
+                new SqlParameter("@Password", encriptador.HashPassword(client.Usuario.Password)),
+                new SqlParameter("@Foto", client.Usuario.Foto),
+                new SqlParameter("@FechaNacimiento", fechaNacimiento),
+                new SqlParameter("@IdStatus", client.Usuario.IdStatus),
+                new SqlParameter("@IdUsuario", client.Usuario.Id)
+            });
+
+            var clienteRes = await _context.Clientes
+            .Where(cliente => cliente.Usuario.Correo == client.Usuario.Correo)
+            .Join(_context.Usuarios,
                 client => client.IdUsuario,
                 user => user.Id,
-                (client, user) => new IClientesRes
+                (client, user) => new ClienteDto
                 {
                     IdCliente = client.IdCliente,
-                    Nombre = user.Nombre,
-                    Apellido = user.Apellido,
-                    Correo = user.Correo,
-                    Foto = user.Foto,
-                    FechaNacimiento = user.FechaNacimiento,
-                    FechaRegistro = user.FechaRegistro,
                     Telefono = client.Telefono,
                     Direccion = client.Direccion,
                     Rfc = client.Rfc,
-                    IdStatus = user.IdStatus,
+                    Usuario = new UsuarioDto
+                    {
+                        Id = user.Id,
+                        Nombre = user.Nombre,
+                        Apellido = user.Apellido,
+                        Correo = user.Correo,
+                        Password = user.Password,
+                        Foto = user.Foto,
+                        FechaNacimiento = user.FechaNacimiento,
+                        FechaRegistro = user.FechaRegistro,
+                        IdStatus = user.IdStatus
+                    }
                 }).FirstOrDefaultAsync(cliente => cliente.IdCliente == client.IdCliente);
-
 
             return Ok(clienteRes);
         }
@@ -302,8 +237,13 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            _context.Clientes.Remove(cliente);
-            await _context.SaveChangesAsync();
+            // _context.Clientes.Remove(cliente);
+            // await _context.SaveChangesAsync();
+            await _sqlUtil.CallSqlProcedureAsync("dbo.ClienteDEL",
+            new SqlParameter[] {
+                new SqlParameter("@Id", id)
+                });
+
 
             return NoContent();
         }

@@ -5,49 +5,62 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Cors;
 using ClamarojBack.Context;
 using ClamarojBack.Models;
+using ClamarojBack.Dtos;
+using ClamarojBack.Utils;
 
 namespace ClamarojBack.Controllers
 {
+    [EnableCors("ReglasCorsAngular")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class UnidadMedidasController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
 
-        public UnidadMedidasController(AppDbContext context)
+        public UnidadMedidasController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/UnidadMedidas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<UnidadMedida>>> GetUnidadesMedida()
+        public async Task<ActionResult<IEnumerable<UnidadMedidaDto>>> GetUnidadesMedida()
         {
-          if (_context.UnidadesMedida == null)
-          {
-              return NotFound();
-          }
-            return await _context.UnidadesMedida.ToListAsync();
+            if (_context.UnidadesMedida == null)
+            {
+                return NotFound();
+            }
+            var unidadesMedida = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetUnidadesMedida", null);
+
+            return Ok(unidadesMedida);
         }
 
         // GET: api/UnidadMedidas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<UnidadMedida>> GetUnidadMedida(int id)
+        public async Task<ActionResult<UnidadMedidaDto>> GetUnidadMedida(int id)
         {
-          if (_context.UnidadesMedida == null)
-          {
-              return NotFound();
-          }
-            var unidadMedida = await _context.UnidadesMedida.FindAsync(id);
+            if (_context.UnidadesMedida == null)
+            {
+                return NotFound();
+            }
+            var unidadMedida = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetUnidadesMedida", new SqlParameter[] {
+                new SqlParameter("@Id", id)
+            });
 
             if (unidadMedida == null)
             {
                 return NotFound();
             }
 
-            return unidadMedida;
+            return Ok(unidadMedida);
         }
 
         // PUT: api/UnidadMedidas/5
@@ -59,12 +72,13 @@ namespace ClamarojBack.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(unidadMedida).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                await _sqlUtil.CallSqlProcedureAsync("dbo.UnidadMedidaUPD", new SqlParameter[] {
+                    new SqlParameter("@Id", unidadMedida.IdUnidadMedida),
+                    new SqlParameter("@Nombre", unidadMedida.Nombre),
+                    new SqlParameter("@Descripcion", unidadMedida.Descripcion),
+                });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -84,16 +98,22 @@ namespace ClamarojBack.Controllers
         // POST: api/UnidadMedidas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UnidadMedida>> PostUnidadMedida(UnidadMedida unidadMedida)
+        public async Task<ActionResult<UnidadMedidaDto>> PostUnidadMedida(UnidadMedida unidadMedida)
         {
-          if (_context.UnidadesMedida == null)
-          {
-              return Problem("Entity set 'AppDbContext.UnidadesMedida'  is null.");
-          }
-            _context.UnidadesMedida.Add(unidadMedida);
-            await _context.SaveChangesAsync();
+            if (_context.UnidadesMedida == null)
+            {
+                return Problem("Entity set 'AppDbContext.UnidadesMedida'  is null.");
+            }
+            await _sqlUtil.CallSqlProcedureAsync("dbo.UnidadMedidaINS", new SqlParameter[] {
+                new SqlParameter("@Nombre", unidadMedida.Nombre),
+                new SqlParameter("@Descripcion", unidadMedida.Descripcion),
+            });
 
-            return CreatedAtAction("GetUnidadMedida", new { id = unidadMedida.IdUnidadMedida }, unidadMedida);
+            var unidadMedidaDto = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetUnidadesMedida", new SqlParameter[] {
+                new SqlParameter("@Id", unidadMedida.IdUnidadMedida)
+            });
+
+            return Ok(unidadMedidaDto);
         }
 
         // DELETE: api/UnidadMedidas/5
@@ -110,8 +130,9 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            _context.UnidadesMedida.Remove(unidadMedida);
-            await _context.SaveChangesAsync();
+            await _sqlUtil.CallSqlProcedureAsync("dbo.UnidadMedidaDEL", new SqlParameter[] {
+                new SqlParameter("@Id", id)
+            });
 
             return NoContent();
         }
