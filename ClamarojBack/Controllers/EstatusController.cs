@@ -38,9 +38,14 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            var estatus = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetEstatus", null);
+            var estatus = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetEstatuses", null);
+            var estatusDto = estatus.Select(e => new EstatusDto
+            {
+                IdEstatus = Convert.ToInt32(e["IdEstatus"]),
+                Nombre = e["Nombre"].ToString(),
+            }).ToList();
 
-            return Ok(estatus);
+            return Ok(estatusDto);
         }
 
         // GET: api/Estatus/5

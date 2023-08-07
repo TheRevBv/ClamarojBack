@@ -19,6 +19,7 @@ namespace ClamarojBack.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class UsuariosController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -105,7 +106,7 @@ namespace ClamarojBack.Controllers
         // PUT: api/Usuarios/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUsuario(int id, Usuario usuario)
+        public async Task<IActionResult> PutUsuario(int id, UsuarioDto usuario)
         {
             var encriptador = new SecurityUtil();
             if (id != usuario.Id)
@@ -117,13 +118,20 @@ namespace ClamarojBack.Controllers
 
             if (usuario.Password != usuarioDb!.Password)
             {
-                usuario.Password = encriptador.HashPassword(usuario.Password);
+                usuario.Password = encriptador.HashPassword(usuario.Password!);
             }
             else
             {
                 usuario.Password = usuarioDb.Password;
             }
             DateTime fechaNacimiento = Convert.ToDateTime(usuario.FechaNacimiento);
+            //Convertir Arreglo de roles a cadena separada por comas
+            string roles = "";
+            foreach (var rol in usuario.Roles)
+            {
+                roles += rol.Id + ",";
+            }
+            roles = roles != "" ? roles.TrimEnd(',') : roles;
 
             try
             {
@@ -136,7 +144,8 @@ namespace ClamarojBack.Controllers
                     new SqlParameter("@Password", usuario.Password),
                     new SqlParameter("@FechaNacimiento", fechaNacimiento),
                     new SqlParameter("@Foto", usuario.Foto),
-                    new SqlParameter("@IdStatus", usuario.IdStatus)
+                    new SqlParameter("@IdStatus", usuario.IdStatus),
+                    new SqlParameter("@IdRoles", roles)
                 });
                 //await _context.SaveChangesAsync();
             }
@@ -158,7 +167,7 @@ namespace ClamarojBack.Controllers
         // POST: api/Usuarios
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UsuarioDto>> PostUsuario(Usuario usuario)
+        public async Task<ActionResult<UsuarioDto>> PostUsuario(UsuarioDto usuario)
         {
             var encriptador = new SecurityUtil();
             if (_context.Usuarios == null)
@@ -166,6 +175,12 @@ namespace ClamarojBack.Controllers
                 return Problem("Entity set 'AppDbContext.Usuarios'  is null.");
             }
             DateTime fechaNacimiento = Convert.ToDateTime(usuario.FechaNacimiento);
+            //Convertir Arreglo de roles a cadena separada por comas
+            string roles = "";
+            foreach (var rol in usuario.Roles)
+            {
+                roles += rol.Id + ",";
+            }
 
             await _sqlUtil.CallSqlProcedureAsync("dbo.UsuariosUPD", new SqlParameter[]
             {
@@ -173,9 +188,10 @@ namespace ClamarojBack.Controllers
                 new SqlParameter("@Nombre", usuario.Nombre),
                 new SqlParameter("@Apellido", usuario.Apellido),
                 new SqlParameter("@Correo", usuario.Correo),
-                new SqlParameter("@Password", encriptador.HashPassword(usuario.Password)),
+                new SqlParameter("@Password", encriptador.HashPassword(usuario.Password!)),
                 new SqlParameter("@FechaNacimiento", fechaNacimiento),
                 new SqlParameter("@Foto", usuario.Foto),
+                new SqlParameter("@IdRoles" , roles),
                 new SqlParameter("@IdStatus", usuario.IdStatus)
             });
             //Traer el usuario recien creado
