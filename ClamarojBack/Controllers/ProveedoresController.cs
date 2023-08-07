@@ -43,8 +43,10 @@ namespace ClamarojBack.Controllers
                 IdProveedor = Convert.ToInt32(p["IdProveedor"]),
                 Direccion = p["Direccion"].ToString(),
                 Telefono = p["Telefono"].ToString(),
+                Correo = p["Correo"].ToString(),
                 Rfc = p["Rfc"].ToString(),
-                RazonSocial = p["RazonSocial"].ToString()
+                RazonSocial = p["RazonSocial"].ToString(),
+                IdStatus = Convert.ToInt32(p["IdStatus"])
             }).ToList();
 
             return Ok(proveedores);
@@ -90,7 +92,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return Ok(proveedor);
+            return Ok(proveedorDto);
         }
 
         // PUT: api/Proveedores/5
