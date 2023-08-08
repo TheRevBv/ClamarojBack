@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230808204620_AgregaFechaEntrega")]
-    partial class AgregaFechaEntrega
+    [Migration("20230808211010_CorreccionesEnCarrito")]
+    partial class CorreccionesEnCarrito
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,11 +27,20 @@ namespace ClamarojBack.Migrations
 
             modelBuilder.Entity("ClamarojBack.Models.Carrito", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("IdCarrito")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdCarrito"));
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IdCliente")
                         .HasColumnType("int");
@@ -39,9 +48,11 @@ namespace ClamarojBack.Migrations
                     b.Property<int>("IdProducto")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("IdCarrito");
 
                     b.HasIndex("IdCliente");
+
+                    b.HasIndex("IdProducto");
 
                     b.ToTable("Carritos");
                 });
@@ -358,9 +369,6 @@ namespace ClamarojBack.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("IdCarrito")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
 
@@ -379,8 +387,6 @@ namespace ClamarojBack.Migrations
 
                     b.HasIndex("Codigo")
                         .IsUnique();
-
-                    b.HasIndex("IdCarrito");
 
                     b.ToTable("Productos");
                 });
@@ -618,7 +624,15 @@ namespace ClamarojBack.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("ClamarojBack.Models.Producto", "Producto")
+                        .WithMany("Carrito")
+                        .HasForeignKey("IdProducto")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Cliente");
+
+                    b.Navigation("Producto");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Cliente", b =>
@@ -728,17 +742,6 @@ namespace ClamarojBack.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ClamarojBack.Models.Producto", b =>
-                {
-                    b.HasOne("ClamarojBack.Models.Carrito", "Carrito")
-                        .WithMany("Productos")
-                        .HasForeignKey("IdCarrito")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Carrito");
-                });
-
             modelBuilder.Entity("ClamarojBack.Models.Proveedor", b =>
                 {
                     b.HasOne("ClamarojBack.Models.Usuario", "Usuario")
@@ -799,11 +802,6 @@ namespace ClamarojBack.Migrations
                     b.Navigation("Pedido");
                 });
 
-            modelBuilder.Entity("ClamarojBack.Models.Carrito", b =>
-                {
-                    b.Navigation("Productos");
-                });
-
             modelBuilder.Entity("ClamarojBack.Models.Cliente", b =>
                 {
                     b.Navigation("Carrito");
@@ -834,6 +832,8 @@ namespace ClamarojBack.Migrations
 
             modelBuilder.Entity("ClamarojBack.Models.Producto", b =>
                 {
+                    b.Navigation("Carrito");
+
                     b.Navigation("DetallePedidos");
 
                     b.Navigation("Receta");

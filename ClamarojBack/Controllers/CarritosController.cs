@@ -50,7 +50,7 @@ namespace ClamarojBack.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCarrito(int id, Carrito carrito)
         {
-            if (id != carrito.Id)
+            if (id != carrito.IdCarrito)
             {
                 return BadRequest();
             }
@@ -88,7 +88,7 @@ namespace ClamarojBack.Controllers
             _context.Carritos.Add(carrito);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCarrito", new { id = carrito.Id }, carrito);
+            return CreatedAtAction("GetCarrito", new { id = carrito.IdCarrito }, carrito);
         }
 
         // DELETE: api/Carritoes/5
@@ -113,7 +113,7 @@ namespace ClamarojBack.Controllers
 
         private bool CarritoExists(int id)
         {
-            return (_context.Carritos?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Carritos?.Any(e => e.IdCarrito == id)).GetValueOrDefault();
         }
     }
 }

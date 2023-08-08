@@ -61,10 +61,6 @@ namespace ClamarojBack.Context
             modelBuilder.Entity<Producto>()
                 .HasIndex(p => p.Codigo)
                 .IsUnique();
-            modelBuilder.Entity<Producto>()
-                .HasOne(p => p.Carrito)
-                .WithMany(c => c.Productos)
-                .HasForeignKey(p => p.IdCarrito);
             modelBuilder.Entity<Receta>()
                 .HasIndex(r => r.Codigo)
                 .IsUnique();
@@ -97,6 +93,10 @@ namespace ClamarojBack.Context
                 .HasOne(c => c.Cliente)
                 .WithMany(c => c.Carrito)
                 .HasForeignKey(c => c.IdCliente);
+            modelBuilder.Entity<Carrito>()
+                .HasOne(c => c.Producto)
+                .WithMany(p => p.Carrito)
+                .HasForeignKey(c => c.IdProducto);
             modelBuilder.Entity<Venta>()
                 .HasOne(v => v.Pedido)
                 .WithOne(p => p.Venta)

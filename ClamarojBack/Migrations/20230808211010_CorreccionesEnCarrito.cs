@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ClamarojBack.Migrations
 {
     /// <inheritdoc />
-    public partial class AgregaFechaEntrega : Migration
+    public partial class CorreccionesEnCarrito : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,6 +22,27 @@ namespace ClamarojBack.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Estatus", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Productos",
+                columns: table => new
+                {
+                    IdProducto = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Nombre = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
+                    Descripcion = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    Precio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Foto = table.Column<string>(type: "TEXT", nullable: false),
+                    Merma = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    IdStatus = table.Column<int>(type: "int", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Productos", x => x.IdProducto);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,6 +92,29 @@ namespace ClamarojBack.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Recetas",
+                columns: table => new
+                {
+                    IdReceta = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    IdProducto = table.Column<int>(type: "int", nullable: false),
+                    IdStatus = table.Column<int>(type: "int", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Recetas", x => x.IdReceta);
+                    table.ForeignKey(
+                        name: "FK_Recetas_Productos_IdProducto",
+                        column: x => x.IdProducto,
+                        principalTable: "Productos",
+                        principalColumn: "IdProducto",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -180,20 +225,59 @@ namespace ClamarojBack.Migrations
                 name: "Carritos",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    IdCarrito = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdCliente = table.Column<int>(type: "int", nullable: false),
-                    IdProducto = table.Column<int>(type: "int", nullable: false)
+                    IdProducto = table.Column<int>(type: "int", nullable: false),
+                    Cantidad = table.Column<int>(type: "int", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Carritos", x => x.Id);
+                    table.PrimaryKey("PK_Carritos", x => x.IdCarrito);
                     table.ForeignKey(
                         name: "FK_Carritos_Clientes_IdCliente",
                         column: x => x.IdCliente,
                         principalTable: "Clientes",
                         principalColumn: "IdCliente",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Carritos_Productos_IdProducto",
+                        column: x => x.IdProducto,
+                        principalTable: "Productos",
+                        principalColumn: "IdProducto",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DetallePedidos",
+                columns: table => new
+                {
+                    IdDetallePedido = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdPedido = table.Column<int>(type: "int", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IdProducto = table.Column<int>(type: "int", nullable: false),
+                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    PrecioUnitario = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DetallePedidos", x => x.IdDetallePedido);
+                    table.ForeignKey(
+                        name: "FK_DetallePedido_Pedido",
+                        columns: x => new { x.IdPedido, x.Fecha },
+                        principalTable: "Pedidos",
+                        principalColumns: new[] { "IdPedido", "Fecha" },
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_DetallePedidos_Productos_IdProducto",
+                        column: x => x.IdProducto,
+                        principalTable: "Productos",
+                        principalColumn: "IdProducto",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -293,87 +377,6 @@ namespace ClamarojBack.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Productos",
-                columns: table => new
-                {
-                    IdProducto = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    Nombre = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
-                    Descripcion = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
-                    Precio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    Foto = table.Column<string>(type: "TEXT", nullable: false),
-                    Merma = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IdCarrito = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Productos", x => x.IdProducto);
-                    table.ForeignKey(
-                        name: "FK_Productos_Carritos_IdCarrito",
-                        column: x => x.IdCarrito,
-                        principalTable: "Carritos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DetallePedidos",
-                columns: table => new
-                {
-                    IdDetallePedido = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    IdPedido = table.Column<int>(type: "int", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IdProducto = table.Column<int>(type: "int", nullable: false),
-                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    PrecioUnitario = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    Subtotal = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DetallePedidos", x => x.IdDetallePedido);
-                    table.ForeignKey(
-                        name: "FK_DetallePedido_Pedido",
-                        columns: x => new { x.IdPedido, x.Fecha },
-                        principalTable: "Pedidos",
-                        principalColumns: new[] { "IdPedido", "Fecha" },
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DetallePedidos_Productos_IdProducto",
-                        column: x => x.IdProducto,
-                        principalTable: "Productos",
-                        principalColumn: "IdProducto",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Recetas",
-                columns: table => new
-                {
-                    IdReceta = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
-                    IdProducto = table.Column<int>(type: "int", nullable: false),
-                    IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Recetas", x => x.IdReceta);
-                    table.ForeignKey(
-                        name: "FK_Recetas_Productos_IdProducto",
-                        column: x => x.IdProducto,
-                        principalTable: "Productos",
-                        principalColumn: "IdProducto",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Ingrediente",
                 columns: table => new
                 {
@@ -405,6 +408,11 @@ namespace ClamarojBack.Migrations
                 name: "IX_Carritos_IdCliente",
                 table: "Carritos",
                 column: "IdCliente");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Carritos_IdProducto",
+                table: "Carritos",
+                column: "IdProducto");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Clientes_IdUsuario",
@@ -477,11 +485,6 @@ namespace ClamarojBack.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productos_IdCarrito",
-                table: "Productos",
-                column: "IdCarrito");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Proveedores_IdUsuario",
                 table: "Proveedores",
                 column: "IdUsuario",
@@ -544,6 +547,9 @@ namespace ClamarojBack.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Carritos");
+
+            migrationBuilder.DropTable(
                 name: "Compras");
 
             migrationBuilder.DropTable(
@@ -568,6 +574,9 @@ namespace ClamarojBack.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
+                name: "Clientes");
+
+            migrationBuilder.DropTable(
                 name: "Pedidos");
 
             migrationBuilder.DropTable(
@@ -581,12 +590,6 @@ namespace ClamarojBack.Migrations
 
             migrationBuilder.DropTable(
                 name: "Estatus");
-
-            migrationBuilder.DropTable(
-                name: "Carritos");
-
-            migrationBuilder.DropTable(
-                name: "Clientes");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");
