@@ -9,7 +9,7 @@ namespace ClamarojBack.Models
         [Key]
         public int Id { get; set; }
         public DateTime Fecha { get; set; }
-        public DateTime FechaPedido { get; set; }
+        //public DateTime FechaPedido { get; set; }
         public int IdProveedor { get; set; }
         public int IdPedido { get; set; }
         [Column(TypeName = "decimal(18,4)")]

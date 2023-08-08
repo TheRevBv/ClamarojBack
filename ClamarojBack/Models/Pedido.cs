@@ -12,6 +12,7 @@ namespace ClamarojBack.Models
         public int IdStatus { get; set; } = 1;
         public Estatus Estatus { get; set; } = new Estatus();
         public DateTime Fecha { get; set; } = DateTime.Now;
+        public DateTime FechaEntrega { get; set; } = DateTime.Now + TimeSpan.FromDays(7);
         [StringLength(45)]
         public string Domicilio { get; set; } = string.Empty;
         [Phone, StringLength(10)]

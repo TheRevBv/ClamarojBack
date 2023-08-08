@@ -88,9 +88,6 @@ namespace ClamarojBack.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("FechaPedido")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("IdPedido")
                         .HasColumnType("int");
 
@@ -280,6 +277,9 @@ namespace ClamarojBack.Migrations
                         .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
+
+                    b.Property<DateTime>("FechaEntrega")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -586,9 +586,6 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaPedido")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdCliente")

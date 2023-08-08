@@ -5,7 +5,7 @@
 namespace ClamarojBack.Migrations
 {
     /// <inheritdoc />
-    public partial class AgregaVentasComprasCarrito : Migration
+    public partial class AgregaFechaEntrega : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -102,6 +102,7 @@ namespace ClamarojBack.Migrations
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdUsuario = table.Column<int>(type: "int", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
+                    FechaEntrega = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Domicilio = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     RazonSocial = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
@@ -202,7 +203,6 @@ namespace ClamarojBack.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaPedido = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdCliente = table.Column<int>(type: "int", nullable: false),
                     IdPedido = table.Column<int>(type: "int", nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
@@ -231,7 +231,6 @@ namespace ClamarojBack.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaPedido = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdProveedor = table.Column<int>(type: "int", nullable: false),
                     IdPedido = table.Column<int>(type: "int", nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,4)", nullable: false)

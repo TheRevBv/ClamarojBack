@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230808201741_AgregaVentasComprasCarrito")]
-    partial class AgregaVentasComprasCarrito
+    [Migration("20230808204620_AgregaFechaEntrega")]
+    partial class AgregaFechaEntrega
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -89,9 +89,6 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaPedido")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdPedido")
@@ -283,6 +280,9 @@ namespace ClamarojBack.Migrations
                         .IsRequired()
                         .HasMaxLength(45)
                         .HasColumnType("nvarchar(45)");
+
+                    b.Property<DateTime>("FechaEntrega")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -589,9 +589,6 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaPedido")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("IdCliente")
