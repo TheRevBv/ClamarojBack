@@ -11,8 +11,6 @@ namespace ClamarojBack.Models
         public int IdPedido { get; set; }
         public DateTime Fecha { get; set; } = DateTime.Now;
         public int IdProducto { get; set; }
-        public int IdMateriaPrima { get; set; }
-        public int IdUnidadMedida { get; set; }
         [Column(TypeName = "decimal(18,4)")]
         public decimal Cantidad { get; set; }
         [Column(TypeName = "decimal(18,4)")]
@@ -21,7 +19,5 @@ namespace ClamarojBack.Models
         public decimal Subtotal { get; set; }
         public Pedido Pedido { get; set; } = null!;
         public Producto Producto { get; set; } = null!;
-        public MateriaPrima MateriaPrima { get; set; } = null!;
-        public UnidadMedida UnidadMedida { get; set; } = null!;
     }
 }

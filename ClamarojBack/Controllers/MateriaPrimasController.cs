@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ClamarojBack.Context;
+﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
@@ -77,7 +72,7 @@ namespace ClamarojBack.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(materiaPrima).State =  EntityState.Modified;
+            _context.Entry(materiaPrima).State = EntityState.Modified;
 
             try
             {
@@ -120,7 +115,7 @@ namespace ClamarojBack.Controllers
 
         private bool MateriaPrimaExists(int id)
         {
-          return (_context.MateriasPrimas?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.MateriasPrimas?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

@@ -29,6 +29,7 @@ namespace ClamarojBack.Models
         public int IdStatus { get; set; } = 1;
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
-        public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
+        public ICollection<Ingrediente> Ingredientes { get; set; } = new List<Ingrediente>();
+        //public ICollection<Receta> Recetas { get; set; } = new List<Receta>();
     }
 }

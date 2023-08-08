@@ -19,10 +19,13 @@ namespace ClamarojBack.Models
         [Column(TypeName = "TEXT")]
         public string Foto { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,4)")]
-        public decimal Merma { get; set; } = 0;
+        public decimal Merma { get; set; } = 0; //Merma permitida en porcentaje
         public int IdStatus { get; set; } = 1;
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
         public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
+        public int IdCarrito { get; set; }
+        public Carrito? Carrito { get; set; }
+        public Receta? Receta { get; set; }
     }
 }

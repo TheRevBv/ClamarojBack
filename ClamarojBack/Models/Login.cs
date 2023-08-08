@@ -1,5 +1,4 @@
-﻿using System;
-namespace ClamarojBack.Models
+﻿namespace ClamarojBack.Models
 {
     public class Login
     {

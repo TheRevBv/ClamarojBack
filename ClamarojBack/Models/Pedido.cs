@@ -29,5 +29,7 @@ namespace ClamarojBack.Models
         [Column(TypeName = "decimal(18,4)")]
         public decimal Total { get; set; } = 0;
         public ICollection<DetallePedido> DetallesPedidos { get; set; } = new List<DetallePedido>();
+        public Venta Venta { get; set; } = new Venta();
+        public Compra Compra { get; set; } = new Compra();
     }
 }

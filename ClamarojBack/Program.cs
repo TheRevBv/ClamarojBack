@@ -2,7 +2,6 @@
 using ClamarojBack;
 using ClamarojBack.Context;
 using Microsoft.EntityFrameworkCore;
-using System.Net;
 
 public class Program
 {

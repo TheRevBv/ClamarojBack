@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ClamarojBack.Context;
+﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
@@ -29,7 +24,7 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            
+
             return await _context.Productos.ToListAsync();
         }
 
@@ -121,7 +116,7 @@ namespace ClamarojBack.Controllers
 
         private bool ProductoExists(int id)
         {
-          return (_context.Productos?.Any(e => e.IdProducto == id)).GetValueOrDefault();
+            return (_context.Productos?.Any(e => e.IdProducto == id)).GetValueOrDefault();
         }
     }
 }

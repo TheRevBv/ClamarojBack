@@ -7,55 +7,55 @@ namespace ClamarojBack.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolsController : ControllerBase
+    public class RecetasController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public RolsController(AppDbContext context)
+        public RecetasController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Rols
+        // GET: api/Recetas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rol>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<Receta>>> GetRecetas()
         {
-            if (_context.Roles == null)
+            if (_context.Recetas == null)
             {
                 return NotFound();
             }
-            return await _context.Roles.ToListAsync();
+            return await _context.Recetas.ToListAsync();
         }
 
-        // GET: api/Rols/5
+        // GET: api/Recetas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Rol>> GetRol(int id)
+        public async Task<ActionResult<Receta>> GetReceta(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Recetas == null)
             {
                 return NotFound();
             }
-            var rol = await _context.Roles.FindAsync(id);
+            var receta = await _context.Recetas.FindAsync(id);
 
-            if (rol == null)
+            if (receta == null)
             {
                 return NotFound();
             }
 
-            return rol;
+            return receta;
         }
 
-        // PUT: api/Rols/5
+        // PUT: api/Recetas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRol(int id, Rol rol)
+        public async Task<IActionResult> PutReceta(int id, Receta receta)
         {
-            if (id != rol.Id)
+            if (id != receta.IdReceta)
             {
                 return BadRequest();
             }
 
-            _context.Entry(rol).State = EntityState.Modified;
+            _context.Entry(receta).State = EntityState.Modified;
 
             try
             {
@@ -63,7 +63,7 @@ namespace ClamarojBack.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RolExists(id))
+                if (!RecetaExists(id))
                 {
                     return NotFound();
                 }
@@ -76,44 +76,44 @@ namespace ClamarojBack.Controllers
             return NoContent();
         }
 
-        // POST: api/Rols
+        // POST: api/Recetas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Rol>> PostRol(Rol rol)
+        public async Task<ActionResult<Receta>> PostReceta(Receta receta)
         {
-            if (_context.Roles == null)
+            if (_context.Recetas == null)
             {
-                return Problem("Entity set 'AppDbContext.Roles'  is null.");
+                return Problem("Entity set 'AppDbContext.Recetas'  is null.");
             }
-            _context.Roles.Add(rol);
+            _context.Recetas.Add(receta);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRol", new { id = rol.Id }, rol);
+            return CreatedAtAction("GetReceta", new { id = receta.IdReceta }, receta);
         }
 
-        // DELETE: api/Rols/5
+        // DELETE: api/Recetas/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRol(int id)
+        public async Task<IActionResult> DeleteReceta(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Recetas == null)
             {
                 return NotFound();
             }
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null)
+            var receta = await _context.Recetas.FindAsync(id);
+            if (receta == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(rol);
+            _context.Recetas.Remove(receta);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RolExists(int id)
+        private bool RecetaExists(int id)
         {
-            return (_context.Roles?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Recetas?.Any(e => e.IdReceta == id)).GetValueOrDefault();
         }
     }
 }

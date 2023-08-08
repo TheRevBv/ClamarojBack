@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.ComponentModel.DataAnnotations;
 
 namespace ClamarojBack.Models
@@ -17,5 +16,6 @@ namespace ClamarojBack.Models
         public string Rfc { get; set; } = string.Empty;
         [StringLength(45)]
         public string RazonSocial { get; set; } = string.Empty;
+        public ICollection<Compra> Compras { get; set; } = new List<Compra>();
     }
 }

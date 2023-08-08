@@ -22,6 +22,27 @@ namespace ClamarojBack.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("ClamarojBack.Models.Carrito", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("IdCliente")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProducto")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdCliente");
+
+                    b.ToTable("Carritos");
+                });
+
             modelBuilder.Entity("ClamarojBack.Models.Cliente", b =>
                 {
                     b.Property<int>("IdCliente")
@@ -56,6 +77,39 @@ namespace ClamarojBack.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("ClamarojBack.Models.Compra", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaPedido")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdPedido")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProveedor")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdProveedor");
+
+                    b.HasIndex("IdPedido", "Fecha")
+                        .IsUnique();
+
+                    b.ToTable("Compras");
+                });
+
             modelBuilder.Entity("ClamarojBack.Models.DetallePedido", b =>
                 {
                     b.Property<int>("IdDetallePedido")
@@ -70,16 +124,10 @@ namespace ClamarojBack.Migrations
                     b.Property<DateTime>("Fecha")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("IdMateriaPrima")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdPedido")
                         .HasColumnType("int");
 
                     b.Property<int>("IdProducto")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IdUnidadMedida")
                         .HasColumnType("int");
 
                     b.Property<decimal>("PrecioUnitario")
@@ -90,11 +138,7 @@ namespace ClamarojBack.Migrations
 
                     b.HasKey("IdDetallePedido");
 
-                    b.HasIndex("IdMateriaPrima");
-
                     b.HasIndex("IdProducto");
-
-                    b.HasIndex("IdUnidadMedida");
 
                     b.HasIndex("IdPedido", "Fecha");
 
@@ -120,6 +164,33 @@ namespace ClamarojBack.Migrations
                         .IsUnique();
 
                     b.ToTable("Estatus");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Ingrediente", b =>
+                {
+                    b.Property<int>("IdReceta")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdMateriaPrima")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.Property<DateTime>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdStatus")
+                        .HasColumnType("int");
+
+                    b.HasKey("IdReceta", "IdMateriaPrima");
+
+                    b.HasIndex("IdMateriaPrima");
+
+                    b.ToTable("Ingrediente");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.MateriaPrima", b =>
@@ -284,6 +355,9 @@ namespace ClamarojBack.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("IdCarrito")
+                        .HasColumnType("int");
+
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
 
@@ -302,6 +376,8 @@ namespace ClamarojBack.Migrations
 
                     b.HasIndex("Codigo")
                         .IsUnique();
+
+                    b.HasIndex("IdCarrito");
 
                     b.ToTable("Productos");
                 });
@@ -356,9 +432,6 @@ namespace ClamarojBack.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdReceta"));
 
-                    b.Property<decimal>("Cantidad")
-                        .HasColumnType("decimal(10,2)");
-
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -370,19 +443,10 @@ namespace ClamarojBack.Migrations
                     b.Property<DateTime>("FechaRegistro")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("IdMateriaPrima")
-                        .HasColumnType("int");
-
                     b.Property<int>("IdProducto")
                         .HasColumnType("int");
 
                     b.Property<int>("IdStatus")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MateriaPrimaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProductoIdProducto")
                         .HasColumnType("int");
 
                     b.HasKey("IdReceta");
@@ -390,9 +454,8 @@ namespace ClamarojBack.Migrations
                     b.HasIndex("Codigo")
                         .IsUnique();
 
-                    b.HasIndex("MateriaPrimaId");
-
-                    b.HasIndex("ProductoIdProducto");
+                    b.HasIndex("IdProducto")
+                        .IsUnique();
 
                     b.ToTable("Recetas");
                 });
@@ -514,6 +577,50 @@ namespace ClamarojBack.Migrations
                     b.ToTable("Usuarios");
                 });
 
+            modelBuilder.Entity("ClamarojBack.Models.Venta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaPedido")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdCliente")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdPedido")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Total")
+                        .HasColumnType("decimal(18,4)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IdCliente");
+
+                    b.HasIndex("IdPedido", "Fecha")
+                        .IsUnique();
+
+                    b.ToTable("Ventas");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Carrito", b =>
+                {
+                    b.HasOne("ClamarojBack.Models.Cliente", "Cliente")
+                        .WithMany("Carrito")
+                        .HasForeignKey("IdCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+                });
+
             modelBuilder.Entity("ClamarojBack.Models.Cliente", b =>
                 {
                     b.HasOne("ClamarojBack.Models.Usuario", "Usuario")
@@ -525,23 +632,30 @@ namespace ClamarojBack.Migrations
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("ClamarojBack.Models.DetallePedido", b =>
+            modelBuilder.Entity("ClamarojBack.Models.Compra", b =>
                 {
-                    b.HasOne("ClamarojBack.Models.MateriaPrima", "MateriaPrima")
-                        .WithMany("DetallePedidos")
-                        .HasForeignKey("IdMateriaPrima")
+                    b.HasOne("ClamarojBack.Models.Proveedor", "Proveedor")
+                        .WithMany("Compras")
+                        .HasForeignKey("IdProveedor")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClamarojBack.Models.Pedido", "Pedido")
+                        .WithOne("Compra")
+                        .HasForeignKey("ClamarojBack.Models.Compra", "IdPedido", "Fecha")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.Navigation("Pedido");
+
+                    b.Navigation("Proveedor");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.DetallePedido", b =>
+                {
                     b.HasOne("ClamarojBack.Models.Producto", "Producto")
                         .WithMany("DetallePedidos")
                         .HasForeignKey("IdProducto")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ClamarojBack.Models.UnidadMedida", "UnidadMedida")
-                        .WithMany("DetallePedidos")
-                        .HasForeignKey("IdUnidadMedida")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -552,13 +666,28 @@ namespace ClamarojBack.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_DetallePedido_Pedido");
 
-                    b.Navigation("MateriaPrima");
-
                     b.Navigation("Pedido");
 
                     b.Navigation("Producto");
+                });
 
-                    b.Navigation("UnidadMedida");
+            modelBuilder.Entity("ClamarojBack.Models.Ingrediente", b =>
+                {
+                    b.HasOne("ClamarojBack.Models.MateriaPrima", "MateriaPrima")
+                        .WithMany("Ingredientes")
+                        .HasForeignKey("IdMateriaPrima")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClamarojBack.Models.Receta", "Receta")
+                        .WithMany("Ingredientes")
+                        .HasForeignKey("IdReceta")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MateriaPrima");
+
+                    b.Navigation("Receta");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.MateriaPrima", b =>
@@ -599,6 +728,17 @@ namespace ClamarojBack.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("ClamarojBack.Models.Producto", b =>
+                {
+                    b.HasOne("ClamarojBack.Models.Carrito", "Carrito")
+                        .WithMany("Productos")
+                        .HasForeignKey("IdCarrito")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Carrito");
+                });
+
             modelBuilder.Entity("ClamarojBack.Models.Proveedor", b =>
                 {
                     b.HasOne("ClamarojBack.Models.Usuario", "Usuario")
@@ -612,19 +752,11 @@ namespace ClamarojBack.Migrations
 
             modelBuilder.Entity("ClamarojBack.Models.Receta", b =>
                 {
-                    b.HasOne("ClamarojBack.Models.MateriaPrima", "MateriaPrima")
-                        .WithMany()
-                        .HasForeignKey("MateriaPrimaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ClamarojBack.Models.Producto", "Producto")
-                        .WithMany()
-                        .HasForeignKey("ProductoIdProducto")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithOne("Receta")
+                        .HasForeignKey("ClamarojBack.Models.Receta", "IdProducto")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("MateriaPrima");
 
                     b.Navigation("Producto");
                 });
@@ -648,6 +780,37 @@ namespace ClamarojBack.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("ClamarojBack.Models.Venta", b =>
+                {
+                    b.HasOne("ClamarojBack.Models.Cliente", "Cliente")
+                        .WithMany("Ventas")
+                        .HasForeignKey("IdCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ClamarojBack.Models.Pedido", "Pedido")
+                        .WithOne("Venta")
+                        .HasForeignKey("ClamarojBack.Models.Venta", "IdPedido", "Fecha")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Cliente");
+
+                    b.Navigation("Pedido");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Carrito", b =>
+                {
+                    b.Navigation("Productos");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Cliente", b =>
+                {
+                    b.Navigation("Carrito");
+
+                    b.Navigation("Ventas");
+                });
+
             modelBuilder.Entity("ClamarojBack.Models.Estatus", b =>
                 {
                     b.Navigation("Pedidos");
@@ -655,27 +818,40 @@ namespace ClamarojBack.Migrations
 
             modelBuilder.Entity("ClamarojBack.Models.MateriaPrima", b =>
                 {
-                    b.Navigation("DetallePedidos");
+                    b.Navigation("Ingredientes");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Pedido", b =>
                 {
+                    b.Navigation("Compra")
+                        .IsRequired();
+
                     b.Navigation("DetallesPedidos");
+
+                    b.Navigation("Venta")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Producto", b =>
                 {
                     b.Navigation("DetallePedidos");
+
+                    b.Navigation("Receta");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Proveedor", b =>
+                {
+                    b.Navigation("Compras");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.Receta", b =>
+                {
+                    b.Navigation("Ingredientes");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Rol", b =>
                 {
                     b.Navigation("RolesUsuario");
-                });
-
-            modelBuilder.Entity("ClamarojBack.Models.UnidadMedida", b =>
-                {
-                    b.Navigation("DetallePedidos");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Usuario", b =>

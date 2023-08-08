@@ -1,8 +1,6 @@
-﻿using System;
-using ClamarojBack.Context;
+﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
-using System.Linq; // Add this namespace for querying the database.
 
 namespace ClamarojBack
 {

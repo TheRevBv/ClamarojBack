@@ -1,7 +1,5 @@
-﻿using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Xml;
 
 namespace ClamarojBack.Utils
 {
@@ -58,7 +56,7 @@ namespace ClamarojBack.Utils
             return results;
         }
 
-        public String CallSqlFunctionValue(string functionName, SqlParameter[]? parameters)
+        public async Task<string> CallSqlFunctionValueAsync(string functionName, SqlParameter[]? parameters)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             using SqlConnection connection = new(connectionString);
@@ -70,12 +68,12 @@ namespace ClamarojBack.Utils
                 command.Parameters.AddRange(parameters);
             }
 
-            String result = "";
+            string? result = null;
 
             try
             {
-                connection.Open();
-                result = command.ExecuteScalar().ToString()!;
+                await connection.OpenAsync(); // Open the connection asynchronously                
+                result = (await command.ExecuteScalarAsync()).ToString();
             }
             catch (Exception ex)
             {
