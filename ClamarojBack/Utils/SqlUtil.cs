@@ -60,20 +60,27 @@ namespace ClamarojBack.Utils
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             using SqlConnection connection = new(connectionString);
-            using SqlCommand command = new(functionName, connection);
-            command.CommandType = CommandType.StoredProcedure;
+            using var command = connection.CreateCommand();
+            var commandText = $"SELECT * FROM {functionName}(";
 
             if (parameters != null)
             {
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    commandText += $"{parameters[i].ParameterName},";
+                }
                 command.Parameters.AddRange(parameters);
             }
+            commandText = commandText.TrimEnd(',') + ")";
+            command.CommandText = commandText;
+            command.CommandType = CommandType.Text;
 
-            string? result = null;
+            string result = "";
 
             try
             {
                 await connection.OpenAsync(); // Open the connection asynchronously                
-                result = (await command.ExecuteScalarAsync()).ToString();
+                result = (await command.ExecuteScalarAsync()).ToString()!;
             }
             catch (Exception ex)
             {
