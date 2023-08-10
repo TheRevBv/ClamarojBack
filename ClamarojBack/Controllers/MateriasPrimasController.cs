@@ -12,11 +12,11 @@ namespace ClamarojBack.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MateriaPrimasController : ControllerBase
+    public class MateriasPrimasController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public MateriaPrimasController(AppDbContext context)
+        public MateriasPrimasController(AppDbContext context)
         {
             _context = context;
         }
