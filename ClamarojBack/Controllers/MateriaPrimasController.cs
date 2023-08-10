@@ -58,7 +58,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return Ok(materiaPrima);
+            return Ok(materiaPrima[0]);
         }
 
         // POST: api/MateriaPrimas
@@ -119,13 +119,10 @@ namespace ClamarojBack.Controllers
             if (id != materiaPrima.Id)
             {
                 return BadRequest();
-            }
-
-            //_context.Entry(materiaPrima).State = EntityState.Modified;
+            }            
 
             try
-            {
-                //await _context.SaveChangesAsync();
+            {                
                 await _sqlUtil.CallSqlProcedureAsync("dbo.MateriasPrimasUPD",
                 new SqlParameter[]
                 {

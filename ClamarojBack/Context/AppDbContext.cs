@@ -56,6 +56,14 @@ namespace ClamarojBack.Context
             modelBuilder.Entity<MateriaPrima>()
                 .HasIndex(mp => mp.Codigo)
                 .IsUnique();
+            modelBuilder.Entity<MateriaPrima>()
+                .HasOne (mp => mp.Proveedor)
+                .WithMany(p => p.MateriasPrimas)
+                .HasForeignKey(mp => mp.IdProveedor);
+            modelBuilder.Entity<MateriaPrima>()
+                .HasOne(mp => mp.UnidadMedida)
+                .WithMany(um => um.MateriasPrimas)
+                .HasForeignKey(mp => mp.IdUnidadMedida);
             modelBuilder.Entity<Proveedor>()
                 .HasIndex(p => p.RazonSocial)
                 .IsUnique();

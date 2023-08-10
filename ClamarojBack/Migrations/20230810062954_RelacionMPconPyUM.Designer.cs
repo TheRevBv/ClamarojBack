@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230810002945_CambiosFechasYReceta")]
-    partial class CambiosFechasYReceta
+    [Migration("20230810062954_RelacionMPconPyUM")]
+    partial class RelacionMPconPyUM
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -249,13 +249,7 @@ namespace ClamarojBack.Migrations
                     b.Property<decimal>("Precio")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<int>("ProveedorIdProveedor")
-                        .HasColumnType("int");
-
                     b.Property<int>("Stock")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UnidadMedidaIdUnidadMedida")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -263,9 +257,9 @@ namespace ClamarojBack.Migrations
                     b.HasIndex("Codigo")
                         .IsUnique();
 
-                    b.HasIndex("ProveedorIdProveedor");
+                    b.HasIndex("IdProveedor");
 
-                    b.HasIndex("UnidadMedidaIdUnidadMedida");
+                    b.HasIndex("IdUnidadMedida");
 
                     b.ToTable("MateriasPrimas");
                 });
@@ -704,14 +698,14 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.MateriaPrima", b =>
                 {
                     b.HasOne("ClamarojBack.Models.Proveedor", "Proveedor")
-                        .WithMany()
-                        .HasForeignKey("ProveedorIdProveedor")
+                        .WithMany("MateriasPrimas")
+                        .HasForeignKey("IdProveedor")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("ClamarojBack.Models.UnidadMedida", "UnidadMedida")
-                        .WithMany()
-                        .HasForeignKey("UnidadMedidaIdUnidadMedida")
+                        .WithMany("MateriasPrimas")
+                        .HasForeignKey("IdUnidadMedida")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -839,6 +833,8 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.Proveedor", b =>
                 {
                     b.Navigation("Compras");
+
+                    b.Navigation("MateriasPrimas");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Receta", b =>
@@ -849,6 +845,11 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.Rol", b =>
                 {
                     b.Navigation("RolesUsuario");
+                });
+
+            modelBuilder.Entity("ClamarojBack.Models.UnidadMedida", b =>
+                {
+                    b.Navigation("MateriasPrimas");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Usuario", b =>

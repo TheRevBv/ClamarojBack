@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ClamarojBack.Migrations
 {
     /// <inheritdoc />
-    public partial class CambiosFechasYReceta : Migration
+    public partial class RelacionMPconPyUM : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -351,11 +352,9 @@ namespace ClamarojBack.Migrations
                     CantMinima = table.Column<int>(type: "int", nullable: false),
                     CantMaxima = table.Column<int>(type: "int", nullable: false),
                     IdUnidadMedida = table.Column<int>(type: "int", nullable: false),
-                    UnidadMedidaIdUnidadMedida = table.Column<int>(type: "int", nullable: false),
                     Precio = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     Foto = table.Column<string>(type: "TEXT", nullable: false),
                     IdProveedor = table.Column<int>(type: "int", nullable: false),
-                    ProveedorIdProveedor = table.Column<int>(type: "int", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
                     FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     FechaModificacion = table.Column<DateTime>(type: "DATETIME", nullable: false)
@@ -364,14 +363,14 @@ namespace ClamarojBack.Migrations
                 {
                     table.PrimaryKey("PK_MateriasPrimas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_MateriasPrimas_Proveedores_ProveedorIdProveedor",
-                        column: x => x.ProveedorIdProveedor,
+                        name: "FK_MateriasPrimas_Proveedores_IdProveedor",
+                        column: x => x.IdProveedor,
                         principalTable: "Proveedores",
                         principalColumn: "IdProveedor",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MateriasPrimas_UnidadesMedida_UnidadMedidaIdUnidadMedida",
-                        column: x => x.UnidadMedidaIdUnidadMedida,
+                        name: "FK_MateriasPrimas_UnidadesMedida_IdUnidadMedida",
+                        column: x => x.IdUnidadMedida,
                         principalTable: "UnidadesMedida",
                         principalColumn: "IdUnidadMedida",
                         onDelete: ReferentialAction.Cascade);
@@ -457,14 +456,14 @@ namespace ClamarojBack.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MateriasPrimas_ProveedorIdProveedor",
+                name: "IX_MateriasPrimas_IdProveedor",
                 table: "MateriasPrimas",
-                column: "ProveedorIdProveedor");
+                column: "IdProveedor");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MateriasPrimas_UnidadMedidaIdUnidadMedida",
+                name: "IX_MateriasPrimas_IdUnidadMedida",
                 table: "MateriasPrimas",
-                column: "UnidadMedidaIdUnidadMedida");
+                column: "IdUnidadMedida");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Pedidos_IdStatus",
