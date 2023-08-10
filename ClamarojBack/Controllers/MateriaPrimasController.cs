@@ -1,4 +1,5 @@
 ﻿using ClamarojBack.Context;
+using ClamarojBack.Dtos;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
@@ -64,7 +65,7 @@ namespace ClamarojBack.Controllers
         // POST: api/MateriaPrimas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<MateriaPrima>> PostMateriaPrima(MateriaPrima materiaPrima)
+        public async Task<ActionResult<MateriaPrima>> PostMateriaPrima(MateriasPrimasDto materiaPrima)
         {
             if (_context.MateriasPrimas == null)
             {
@@ -114,7 +115,7 @@ namespace ClamarojBack.Controllers
         // PUT: api/MateriasPrimas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMateriaPrima(int id, MateriaPrima materiaPrima)
+        public async Task<IActionResult> PutMateriaPrima(int id, MateriasPrimasDto materiaPrima)
         {
             if (id != materiaPrima.Id)
             {
