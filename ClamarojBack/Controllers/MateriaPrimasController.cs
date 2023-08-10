@@ -107,7 +107,9 @@ namespace ClamarojBack.Controllers
                 }
             }
 
-            var materiaPrimaDto = await _context.MateriasPrimas.LastAsync();
+            var materiaPrimaDto = await _context.MateriasPrimas
+                .OrderByDescending(x => x.Id)
+                .FirstAsync();
 
             return CreatedAtAction("GetMateriaPrima", new { id = materiaPrimaDto.Id }, materiaPrimaDto);
         }
