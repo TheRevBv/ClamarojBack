@@ -9,6 +9,7 @@ namespace ClamarojBack.Models
         [Key]
         public int IdDetallePedido { get; set; }
         public int IdPedido { get; set; }
+        [Column(TypeName = "DATETIME")]
         public DateTime Fecha { get; set; } = DateTime.Now;
         public int IdProducto { get; set; }
         [Column(TypeName = "decimal(18,4)")]

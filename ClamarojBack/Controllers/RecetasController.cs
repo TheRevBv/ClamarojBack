@@ -1,19 +1,27 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
+using ClamarojBack.Utils;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
+    [EnableCors("ReglasCorsAngular")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class RecetasController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
 
-        public RecetasController(AppDbContext context)
+        public RecetasController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Recetas
@@ -24,7 +32,11 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            return await _context.Recetas.ToListAsync();
+
+            var recetas = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetRecetas", null);
+
+            return Ok(recetas);
+
         }
 
         // GET: api/Recetas/5
@@ -35,14 +47,19 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            var receta = await _context.Recetas.FindAsync(id);
+
+            var receta = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetReceta", new SqlParameter[]
+            {
+                new SqlParameter("@Id",id)
+            });
+
 
             if (receta == null)
             {
                 return NotFound();
             }
 
-            return receta;
+            return Ok(receta);
         }
 
         // PUT: api/Recetas/5
@@ -55,11 +72,17 @@ namespace ClamarojBack.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(receta).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
+                await _sqlUtil.CallSqlProcedureAsync("dbo.RecetasUPD", new SqlParameter[]
+                {
+                    new SqlParameter("@Id", receta.IdReceta),
+                    new SqlParameter("@Codigo", receta.Codigo),
+                    new SqlParameter("@Nombre", receta.Cantidad),
+                    new SqlParameter("@IdProducto", receta.IdProducto),
+                    new SqlParameter("@IdStatus", receta.IdStatus),
+                });
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -85,10 +108,33 @@ namespace ClamarojBack.Controllers
             {
                 return Problem("Entity set 'AppDbContext.Recetas'  is null.");
             }
-            _context.Recetas.Add(receta);
-            await _context.SaveChangesAsync();
+            try
+            {
+                await _sqlUtil.CallSqlProcedureAsync("dbo.RecetasUPD", new SqlParameter[]
+                {
+                new SqlParameter("@Id", receta.IdReceta),
+                new SqlParameter("@Codigo", receta.Codigo),
+                new SqlParameter("@Nombre", receta.Cantidad),
+                new SqlParameter("@IdProducto", receta.IdProducto),
+                new SqlParameter("@IdStatus", receta.IdStatus),
+                });
+            }
+            catch (DbUpdateException)
+            {
+                //TODO: La neta esto no se si jalee xD
+                if (RecetaExists(receta.IdReceta))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw;
+                }
+            }
 
-            return CreatedAtAction("GetReceta", new { id = receta.IdReceta }, receta);
+            var recetaDto = await _context.Recetas.LastAsync();
+
+            return CreatedAtAction("GetReceta", new { id = recetaDto.IdReceta }, recetaDto);
         }
 
         // DELETE: api/Recetas/5
@@ -105,8 +151,10 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            _context.Recetas.Remove(receta);
-            await _context.SaveChangesAsync();
+            await _sqlUtil.CallSqlProcedureAsync("dbo.RecetasDEL", new SqlParameter[]
+            {
+                new SqlParameter("@Id", id)
+            });
 
             return NoContent();
         }

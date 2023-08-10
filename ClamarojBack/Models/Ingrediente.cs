@@ -9,11 +9,8 @@ namespace ClamarojBack.Models
         public int IdReceta { get; set; }
         public int IdMateriaPrima { get; set; }
         [Column(TypeName = "decimal(18,4)")]
-        public decimal Cantidad { get; set; } = 0;
-        public int IdStatus { get; set; }
-        public DateTime FechaRegistro { get; set; } = DateTime.Now;
-        public DateTime FechaModificacion { get; set; } = DateTime.Now;
-        public Receta? Receta { get; set; }
-        public MateriaPrima? MateriaPrima { get; set; }
+        public decimal Cantidad { get; set; } = 0; //Cantidad de materia prima
+        public Receta Receta { get; set; } = new Receta();
+        public MateriaPrima MateriaPrima { get; set; } = new MateriaPrima();
     }
 }

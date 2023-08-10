@@ -21,7 +21,9 @@ namespace ClamarojBack.Models
         [Column(TypeName = "decimal(18,4)")]
         public decimal Merma { get; set; } = 0; //Merma permitida en porcentaje
         public int IdStatus { get; set; } = 1;
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
         public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
         public ICollection<Carrito> Carrito { get; set; } = new List<Carrito>();

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230808211010_CorreccionesEnCarrito")]
-    partial class CorreccionesEnCarrito
+    [Migration("20230810002945_CambiosFechasYReceta")]
+    partial class CambiosFechasYReceta
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,10 +37,10 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<int>("IdCliente")
                         .HasColumnType("int");
@@ -100,7 +100,7 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<int>("IdPedido")
                         .HasColumnType("int");
@@ -133,7 +133,7 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<int>("IdPedido")
                         .HasColumnType("int");
@@ -188,15 +188,6 @@ namespace ClamarojBack.Migrations
                     b.Property<decimal>("Cantidad")
                         .HasColumnType("decimal(18,4)");
 
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IdStatus")
-                        .HasColumnType("int");
-
                     b.HasKey("IdReceta", "IdMateriaPrima");
 
                     b.HasIndex("IdMateriaPrima");
@@ -229,10 +220,10 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("nvarchar(120)");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<string>("Foto")
                         .IsRequired()
@@ -285,7 +276,7 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<string>("Domicilio")
                         .IsRequired()
@@ -293,7 +284,7 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("nvarchar(45)");
 
                     b.Property<DateTime>("FechaEntrega")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<int>("IdStatus")
                         .HasColumnType("int");
@@ -360,10 +351,10 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("nvarchar(120)");
 
                     b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<string>("Foto")
                         .IsRequired()
@@ -441,16 +432,22 @@ namespace ClamarojBack.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdReceta"));
 
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("decimal(18,4)");
+
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
+                    b.Property<decimal>("Costo")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<int>("IdProducto")
                         .HasColumnType("int");
@@ -557,10 +554,10 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<DateTime>("FechaRegistro")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<string>("Foto")
                         .IsRequired()
@@ -595,7 +592,7 @@ namespace ClamarojBack.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("DATETIME");
 
                     b.Property<int>("IdCliente")
                         .HasColumnType("int");

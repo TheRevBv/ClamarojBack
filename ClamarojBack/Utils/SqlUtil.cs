@@ -50,8 +50,7 @@ namespace ClamarojBack.Utils
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                throw;
+                throw new Exception(ex.Message, ex);
             }
             return results;
         }
@@ -80,11 +79,11 @@ namespace ClamarojBack.Utils
             try
             {
                 await connection.OpenAsync(); // Open the connection asynchronously                
-                result = (await command.ExecuteScalarAsync()).ToString()!;
+                result = (await command.ExecuteScalarAsync())!.ToString()!;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                throw new Exception(ex.Message, ex);
             }
             return result;
         }
@@ -108,8 +107,7 @@ namespace ClamarojBack.Utils
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                throw;
+                throw new Exception(ex.Message, ex);
             }
         }
     }

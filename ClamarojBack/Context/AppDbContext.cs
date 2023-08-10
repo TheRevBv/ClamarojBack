@@ -21,6 +21,7 @@ namespace ClamarojBack.Context
         public DbSet<Carrito> Carritos { get; set; } = null!;
         public DbSet<Venta> Ventas { get; set; } = null!;
         public DbSet<Compra> Compras { get; set; } = null!;
+        public DbSet<Ingrediente> Ingrediente { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

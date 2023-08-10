@@ -11,7 +11,9 @@ namespace ClamarojBack.Models
         public Usuario Usuario { get; set; } = new Usuario();
         public int IdStatus { get; set; } = 1;
         public Estatus Estatus { get; set; } = new Estatus();
+        [Column(TypeName = "DATETIME")]
         public DateTime Fecha { get; set; } = DateTime.Now;
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaEntrega { get; set; } = DateTime.Now + TimeSpan.FromDays(7);
         [StringLength(45)]
         public string Domicilio { get; set; } = string.Empty;

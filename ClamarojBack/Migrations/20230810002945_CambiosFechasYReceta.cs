@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ClamarojBack.Migrations
 {
     /// <inheritdoc />
-    public partial class CorreccionesEnCarrito : Migration
+    public partial class CambiosFechasYReceta : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,8 +36,8 @@ namespace ClamarojBack.Migrations
                     Foto = table.Column<string>(type: "TEXT", nullable: false),
                     Merma = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "DATETIME", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -85,8 +84,8 @@ namespace ClamarojBack.Migrations
                     Correo = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Foto = table.Column<string>(type: "TEXT", nullable: false),
-                    FechaNacimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaNacimiento = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -101,10 +100,12 @@ namespace ClamarojBack.Migrations
                     IdReceta = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Codigo = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Costo = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     IdProducto = table.Column<int>(type: "int", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "DATETIME", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -144,10 +145,10 @@ namespace ClamarojBack.Migrations
                 columns: table => new
                 {
                     IdPedido = table.Column<int>(type: "int", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     IdUsuario = table.Column<int>(type: "int", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaEntrega = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    FechaEntrega = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     Domicilio = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: false),
                     Telefono = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     RazonSocial = table.Column<string>(type: "nvarchar(45)", maxLength: 45, nullable: true),
@@ -230,8 +231,8 @@ namespace ClamarojBack.Migrations
                     IdCliente = table.Column<int>(type: "int", nullable: false),
                     IdProducto = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "DATETIME", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -257,7 +258,7 @@ namespace ClamarojBack.Migrations
                     IdDetallePedido = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdPedido = table.Column<int>(type: "int", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     IdProducto = table.Column<int>(type: "int", nullable: false),
                     Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
                     PrecioUnitario = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
@@ -286,7 +287,7 @@ namespace ClamarojBack.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     IdCliente = table.Column<int>(type: "int", nullable: false),
                     IdPedido = table.Column<int>(type: "int", nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
@@ -314,7 +315,7 @@ namespace ClamarojBack.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Fecha = table.Column<DateTime>(type: "DATETIME", nullable: false),
                     IdProveedor = table.Column<int>(type: "int", nullable: false),
                     IdPedido = table.Column<int>(type: "int", nullable: false),
                     Total = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
@@ -356,8 +357,8 @@ namespace ClamarojBack.Migrations
                     IdProveedor = table.Column<int>(type: "int", nullable: false),
                     ProveedorIdProveedor = table.Column<int>(type: "int", nullable: false),
                     IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    FechaRegistro = table.Column<DateTime>(type: "DATETIME", nullable: false),
+                    FechaModificacion = table.Column<DateTime>(type: "DATETIME", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -382,10 +383,7 @@ namespace ClamarojBack.Migrations
                 {
                     IdReceta = table.Column<int>(type: "int", nullable: false),
                     IdMateriaPrima = table.Column<int>(type: "int", nullable: false),
-                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: false),
-                    IdStatus = table.Column<int>(type: "int", nullable: false),
-                    FechaRegistro = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    FechaModificacion = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Cantidad = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
                 },
                 constraints: table =>
                 {

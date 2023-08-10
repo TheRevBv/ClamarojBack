@@ -8,6 +8,7 @@ namespace ClamarojBack.Models
     {
         [Key]
         public int Id { get; set; }
+        [Column(TypeName = "DATETIME")]
         public DateTime Fecha { get; set; }
         //public DateTime FechaPedido { get; set; }
         public int IdProveedor { get; set; }
