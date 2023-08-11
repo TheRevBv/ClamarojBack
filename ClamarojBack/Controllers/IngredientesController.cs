@@ -1,6 +1,7 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
+using ClamarojBack.Dtos;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -18,9 +19,10 @@ namespace ClamarojBack.Controllers
         private readonly AppDbContext _context;
         private readonly SqlUtil _sqlUtil;
 
-        public IngredientesController(AppDbContext context)
+        public IngredientesController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Ingredientes
@@ -38,7 +40,7 @@ namespace ClamarojBack.Controllers
         }
 
         // GET: api/Ingredientes/5
-        [HttpGet("{id}")]
+        [HttpGet("{idReceta}/{idMateriaPrima}")]
         public async Task<ActionResult<Ingrediente>> GetIngrediente(int idReceta, int idMateriaPrima)
         {
             if (_context.Ingrediente == null)
@@ -56,28 +58,54 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return Ok(ingrediente);
+            return Ok(ingrediente[0]);
+        }
+
+        //GET: api/Ingredientes/GetIngredientesReceta/5
+        [HttpGet, HttpPost]
+        [Route("GetIngredientesReceta/{idReceta}")]
+        public async Task<ActionResult<IEnumerable<Ingrediente>>> GetIngredientesReceta(int idReceta)
+        {
+            if (_context.Ingrediente == null)
+            {
+                return NotFound();
+            }
+            var ingredientes = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetIngredientesReceta", new SqlParameter[]
+            {
+                new SqlParameter("@IdReceta", idReceta)
+            });
+            if (ingredientes == null)
+            {
+                return NotFound();
+            }
+            return Ok(ingredientes);
         }
 
         // PUT: api/Ingredientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutIngrediente(int id, Ingrediente ingrediente)
+        [HttpPut("{idReceta}/{idMateriaPrima}")]
+        public async Task<IActionResult> PutIngrediente(int idReceta, int idMateriaPrima ,IngredienteDto ingrediente)
         {
-            if (id != ingrediente.IdReceta)
+            if (idReceta != ingrediente.IdReceta && idMateriaPrima != ingrediente.IdMateriaPrima)
             {
                 return BadRequest();
             }
 
-            _context.Entry(ingrediente).State = EntityState.Modified;
+            //_context.Entry(ingrediente).State = EntityState.Modified;
 
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
+                await _sqlUtil.CallSqlProcedureAsync("dbo.IngredientesUPD", new SqlParameter[]
+                {
+                    new SqlParameter("@IdReceta", ingrediente.IdReceta),
+                    new SqlParameter("@IdMateriaPrima", ingrediente.IdMateriaPrima),
+                    new SqlParameter("@Cantidad", ingrediente.Cantidad)
+                });
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!IngredienteExists(id))
+                if (!IngredienteExists(idReceta, idMateriaPrima))
                 {
                     return NotFound();
                 }
@@ -93,7 +121,7 @@ namespace ClamarojBack.Controllers
         // POST: api/Ingredientes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Ingrediente>> PostIngrediente(Ingrediente ingrediente)
+        public async Task<ActionResult<Ingrediente>> PostIngrediente(IngredienteDto ingrediente)
         {
             if (_context.Ingrediente == null)
             {
@@ -102,11 +130,17 @@ namespace ClamarojBack.Controllers
             //_context.Ingrediente.Add(ingrediente);
             try
             {
-                await _context.SaveChangesAsync();
+                //await _context.SaveChangesAsync();
+                await _sqlUtil.CallSqlProcedureAsync("dbo.IngredientesUPD", new SqlParameter[]
+                {
+                    new SqlParameter("@IdReceta", ingrediente.IdReceta),
+                    new SqlParameter("@IdMateriaPrima", ingrediente.IdMateriaPrima),
+                    new SqlParameter("@Cantidad", ingrediente.Cantidad)
+                });
             }
             catch (DbUpdateException)
             {
-                if (IngredienteExists(ingrediente.IdReceta))
+                if (IngredienteExists(ingrediente.IdReceta, ingrediente.IdMateriaPrima))
                 {
                     return Conflict();
                 }
@@ -115,12 +149,12 @@ namespace ClamarojBack.Controllers
                     throw;
                 }
             }
-
+           
             return CreatedAtAction("GetIngrediente", new { id = ingrediente.IdReceta }, ingrediente);
         }
 
         // DELETE: api/Ingredientes/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{idReceta}/{idMateriaPrima}")]
         public async Task<IActionResult> DeleteIngrediente(int idReceta, int idMateriaPrima)
         {
             if (_context.Ingrediente == null)
@@ -148,9 +182,9 @@ namespace ClamarojBack.Controllers
             return NoContent();
         }
 
-        private bool IngredienteExists(int id)
+        private bool IngredienteExists(int id, int idMateriaPrima)
         {
-            return (_context.Ingrediente?.Any(e => e.IdReceta == id)).GetValueOrDefault();
+            return (_context.Ingrediente?.Any(e => e.IdReceta == id && e.IdMateriaPrima == idMateriaPrima) ?? false);
         }
     }
 }

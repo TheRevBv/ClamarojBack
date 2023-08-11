@@ -1,10 +1,12 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
+using ClamarojBack.Dtos;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace ClamarojBack.Controllers
 {
@@ -59,13 +61,13 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return Ok(receta);
+            return Ok(receta[0]);
         }
 
         // PUT: api/Recetas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutReceta(int id, Receta receta)
+        public async Task<IActionResult> PutReceta(int id, RecetasDto receta)
         {
             if (id != receta.IdReceta)
             {
@@ -79,7 +81,8 @@ namespace ClamarojBack.Controllers
                 {
                     new SqlParameter("@Id", receta.IdReceta),
                     new SqlParameter("@Codigo", receta.Codigo),
-                    new SqlParameter("@Nombre", receta.Cantidad),
+                    new SqlParameter("@Cantidad", receta.Cantidad),
+                    new SqlParameter("@Costo", receta.Costo),
                     new SqlParameter("@IdProducto", receta.IdProducto),
                     new SqlParameter("@IdStatus", receta.IdStatus),
                 });
@@ -102,7 +105,7 @@ namespace ClamarojBack.Controllers
         // POST: api/Recetas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Receta>> PostReceta(Receta receta)
+        public async Task<ActionResult<Receta>> PostReceta(RecetasDto receta)
         {
             if (_context.Recetas == null)
             {
@@ -112,11 +115,12 @@ namespace ClamarojBack.Controllers
             {
                 await _sqlUtil.CallSqlProcedureAsync("dbo.RecetasUPD", new SqlParameter[]
                 {
-                new SqlParameter("@Id", receta.IdReceta),
-                new SqlParameter("@Codigo", receta.Codigo),
-                new SqlParameter("@Nombre", receta.Cantidad),
-                new SqlParameter("@IdProducto", receta.IdProducto),
-                new SqlParameter("@IdStatus", receta.IdStatus),
+                    new SqlParameter("@Id", receta.IdReceta),
+                    new SqlParameter("@Codigo", receta.Codigo),
+                    new SqlParameter("@Cantidad", receta.Cantidad),
+                    new SqlParameter("@Costo", receta.Costo),
+                    new SqlParameter("@IdProducto", receta.IdProducto),
+                    new SqlParameter("@IdStatus", receta.IdStatus),
                 });
             }
             catch (DbUpdateException)
@@ -132,7 +136,9 @@ namespace ClamarojBack.Controllers
                 }
             }
 
-            var recetaDto = await _context.Recetas.LastAsync();
+            var recetaDto = await _context.Recetas
+                .OrderByDescending(r => r.IdReceta)
+                .FirstAsync();
 
             return CreatedAtAction("GetReceta", new { id = recetaDto.IdReceta }, recetaDto);
         }
