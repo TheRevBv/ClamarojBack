@@ -55,7 +55,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return Ok(unidadMedida);
+            return Ok(unidadMedida[0]);
         }
 
         // PUT: api/UnidadMedidas/5

@@ -79,19 +79,19 @@ namespace ClamarojBack.Controllers
                 await _sqlUtil.CallSqlProcedureAsync("dbo.MateriasPrimasUPD",
                 new SqlParameter[]
                 {
-                new SqlParameter("@Id", materiaPrima.Id),
-                new SqlParameter("@Codigo", materiaPrima.Codigo),
-                new SqlParameter("@Nombre", materiaPrima.Nombre),
-                new SqlParameter("@Descripcion", materiaPrima.Descripcion),
-                new SqlParameter("@Perecedero", materiaPrima.Perecedero),
-                new SqlParameter("@Stock",materiaPrima.Stock),
-                new SqlParameter("@CantMinima",materiaPrima.CantMinima),
-                new SqlParameter("@CantMaxima",materiaPrima.CantMaxima),
-                new SqlParameter("@IdUnidadMedida", materiaPrima.IdUnidadMedida),
-                new SqlParameter("@Precio",materiaPrima.Precio),
-                new SqlParameter("@Foto", materiaPrima.Foto),
-                new SqlParameter("@IdProveedor", materiaPrima.IdProveedor),
-                new SqlParameter("@IdStatus", materiaPrima.IdStatus),
+                    new SqlParameter("@Id", materiaPrima.Id),
+                    new SqlParameter("@Codigo", materiaPrima.Codigo),
+                    new SqlParameter("@Nombre", materiaPrima.Nombre),
+                    new SqlParameter("@Descripcion", materiaPrima.Descripcion),
+                    new SqlParameter("@Perecedero", materiaPrima.Perecedero),
+                    new SqlParameter("@Stock",materiaPrima.Stock),
+                    new SqlParameter("@CantMinima",materiaPrima.CantMinima),
+                    new SqlParameter("@CantMaxima",materiaPrima.CantMaxima),
+                    new SqlParameter("@IdUnidadMedida", materiaPrima.IdUnidadMedida),
+                    new SqlParameter("@Precio",materiaPrima.Precio),
+                    new SqlParameter("@Foto", materiaPrima.Foto),
+                    new SqlParameter("@IdProveedor", materiaPrima.IdProveedor),
+                    new SqlParameter("@IdStatus", materiaPrima.IdStatus),
                 });
             }
             catch (DbUpdateException)
