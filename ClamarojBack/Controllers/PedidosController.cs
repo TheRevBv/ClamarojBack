@@ -25,7 +25,7 @@ namespace ClamarojBack.Controllers
             _sqlUtil = new SqlUtil(configuration);
         }
 
-        // GET: api/Pedidoes
+        // GET: api/Pedidos
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Pedido>>> GetPedidos()
         {
@@ -39,7 +39,7 @@ namespace ClamarojBack.Controllers
             return Ok(pedidos);
         }
 
-        // GET: api/Pedidoes/5
+        // GET: api/Pedidos/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Pedido>> GetPedido(int id)
         {
@@ -62,7 +62,27 @@ namespace ClamarojBack.Controllers
             return Ok(pedido[0]);
         }
 
-        // PUT: api/Pedidoes/5
+        //Get: api/Pedidos/usuario/5
+        [HttpGet("usuario/{id}")]
+        public async Task<ActionResult<Pedido>> GetPedidosByUsuario(int id)
+        {
+            if (_context.Pedidos == null)
+            {
+                return NotFound();
+            }
+            //var pedido = await _context.Pedidos.FindAsync(id);
+            var pedido = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetPedidosByUsuario", new SqlParameter[]
+            {
+                new SqlParameter("@Id",id)
+            });
+            if (pedido == null)
+            {
+                return NotFound();
+            }
+            return Ok(pedido);
+        }
+
+        // PUT: api/Pedidos/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutPedido(int id, PedidosDto pedido)
@@ -109,7 +129,7 @@ namespace ClamarojBack.Controllers
             return NoContent();
         }
 
-        // POST: api/Pedidoes
+        // POST: api/Pedidos
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Pedido>> PostPedido(PedidosDto pedido)
@@ -158,7 +178,7 @@ namespace ClamarojBack.Controllers
             return CreatedAtAction("GetPedido", new { id = pedidoDto.IdPedido }, pedido);
         }
 
-        // DELETE: api/Pedidoes/5
+        // DELETE: api/Pedidos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedido(int id)
         {
