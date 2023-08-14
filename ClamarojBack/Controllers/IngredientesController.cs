@@ -1,7 +1,7 @@
 ﻿using ClamarojBack.Context;
+using ClamarojBack.Dtos;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
-using ClamarojBack.Dtos;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
@@ -84,7 +84,7 @@ namespace ClamarojBack.Controllers
         // PUT: api/Ingredientes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{idReceta}/{idMateriaPrima}")]
-        public async Task<IActionResult> PutIngrediente(int idReceta, int idMateriaPrima ,IngredienteDto ingrediente)
+        public async Task<IActionResult> PutIngrediente(int idReceta, int idMateriaPrima, IngredienteDto ingrediente)
         {
             if (idReceta != ingrediente.IdReceta && idMateriaPrima != ingrediente.IdMateriaPrima)
             {
@@ -149,7 +149,7 @@ namespace ClamarojBack.Controllers
                     throw;
                 }
             }
-           
+
             return CreatedAtAction("GetIngrediente", new { id = ingrediente.IdReceta }, ingrediente);
         }
 

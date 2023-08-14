@@ -1,5 +1,6 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
+using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,10 +11,12 @@ namespace ClamarojBack.Controllers
     public class ProductosController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
 
-        public ProductosController(AppDbContext context)
+        public ProductosController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Productos
@@ -25,7 +28,10 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return await _context.Productos.ToListAsync();
+            //return await _context.Productos.ToListAsync();
+            var productos = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetProductos", null);
+
+            return Ok(productos);
         }
 
         // GET: api/Productos/5

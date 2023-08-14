@@ -1,12 +1,11 @@
 ﻿using ClamarojBack.Context;
+using ClamarojBack.Dtos;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
-using ClamarojBack.Dtos;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace ClamarojBack.Controllers
 {

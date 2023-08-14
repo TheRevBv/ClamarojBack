@@ -99,7 +99,7 @@ namespace ClamarojBack.Controllers
                 //await _context.SaveChangesAsync();
                 await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
                 {
-                    new SqlParameter("@IdPedido",pedido.IdPedido),
+                    new SqlParameter("@Id",pedido.IdPedido),
                     new SqlParameter("@IdUsuario",pedido.IdUsuario),
                     new SqlParameter("@IdStatus", pedido.IdStatus),
                     new SqlParameter("@Fecha",pedido.Fecha),
@@ -112,6 +112,22 @@ namespace ClamarojBack.Controllers
                     new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
                     new SqlParameter("@TipoPedido", pedido.TipoPedido),
                     new SqlParameter("@Total",pedido.Total),
+                });
+
+                //var pedidoINS = _context.Pedidos.OrderByDescending(p => p.IdPedido).FirstOrDefault();
+
+                pedido.DetallesPedidos.ToArray().ToList().ForEach(async detallePedido =>
+                {
+                    await _sqlUtil.CallSqlProcedureAsync("dbo.DetallesPedidosUPD", new SqlParameter[]
+                    {
+                        new SqlParameter("@Id", detallePedido.IdDetallePedido),
+                        new SqlParameter("@IdPedido", detallePedido.IdPedido),
+                        new SqlParameter("@Fecha", detallePedido.Fecha),
+                        new SqlParameter("@IdProducto", detallePedido.IdProducto),
+                        new SqlParameter("@Cantidad", detallePedido.Cantidad),
+                        new SqlParameter("@PrecioUnitario", detallePedido.PrecioUnitario),
+                        new SqlParameter("@Subtotal", detallePedido.Subtotal)
+                    });
                 });
             }
             catch (DbUpdateConcurrencyException)
@@ -144,7 +160,7 @@ namespace ClamarojBack.Controllers
                 //await _context.SaveChangesAsync();
                 await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
                 {
-                    new SqlParameter("@IdPedido",pedido.IdPedido),
+                    new SqlParameter("@Id",pedido.IdPedido),
                     new SqlParameter("@IdUsuario",pedido.IdUsuario),
                     new SqlParameter("@IdStatus", pedido.IdStatus),
                     new SqlParameter("@Fecha",pedido.Fecha),
@@ -157,6 +173,20 @@ namespace ClamarojBack.Controllers
                     new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
                     new SqlParameter("@TipoPedido", pedido.TipoPedido),
                     new SqlParameter("@Total",pedido.Total),
+                });
+
+                pedido.DetallesPedidos.ToArray().ToList().ForEach(async detallePedido =>
+                {
+                    await _sqlUtil.CallSqlProcedureAsync("dbo.DetallesPedidosUPD", new SqlParameter[]
+                    {
+                        new SqlParameter("@Id", detallePedido.IdDetallePedido),
+                        new SqlParameter("@IdPedido", detallePedido.IdPedido),
+                        new SqlParameter("@Fecha", detallePedido.Fecha),
+                        new SqlParameter("@IdProducto", detallePedido.IdProducto),
+                        new SqlParameter("@Cantidad", detallePedido.Cantidad),
+                        new SqlParameter("@PrecioUnitario", detallePedido.PrecioUnitario),
+                        new SqlParameter("@Subtotal", detallePedido.Subtotal)
+                    });
                 });
             }
             catch (DbUpdateException)

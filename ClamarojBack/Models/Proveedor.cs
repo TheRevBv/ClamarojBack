@@ -15,7 +15,7 @@ namespace ClamarojBack.Models
         [StringLength(13)]
         public string Rfc { get; set; } = string.Empty;
         [StringLength(45)]
-        public string RazonSocial { get; set; } = string.Empty;        
+        public string RazonSocial { get; set; } = string.Empty;
         public ICollection<Compra> Compras { get; set; } = new List<Compra>();
         public ICollection<MateriaPrima> MateriasPrimas { get; set; } = new List<MateriaPrima>();
     }
