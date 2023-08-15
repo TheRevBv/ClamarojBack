@@ -27,8 +27,11 @@ namespace ClamarojBack.Models
         public int IdProveedor { get; set; }
         public Proveedor Proveedor { get; set; } = new Proveedor();
         public int IdStatus { get; set; } = 1;
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
-        public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
+        public ICollection<Ingrediente> Ingredientes { get; set; } = new List<Ingrediente>();
+        //public ICollection<Receta> Recetas { get; set; } = new List<Receta>();
     }
 }

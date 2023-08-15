@@ -11,6 +11,6 @@ namespace ClamarojBack.Models
         [StringLength(120)]
         public string Descripcion { get; set; } = string.Empty;
         public int IdStatus { get; set; } = 1;
-        public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
+        public ICollection<MateriaPrima> MateriasPrimas { get; set; } = new List<MateriaPrima>();
     }
 }

@@ -1,16 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+﻿using ClamarojBack.Context;
+using ClamarojBack.Models;
+using ClamarojBack.Models.Responses;
+using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using ClamarojBack.Context;
-using ClamarojBack.Models;
-using ClamarojBack.Utils;
-using ClamarojBack.Models.Responses;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
-using System.Linq;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace ClamarojBack.Controllers
 {

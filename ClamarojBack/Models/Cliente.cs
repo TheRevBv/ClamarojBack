@@ -12,8 +12,9 @@ namespace ClamarojBack.Models
         public string Direccion { get; set; } = string.Empty;
         [Phone, StringLength(10)]
         public string Telefono { get; set; } = string.Empty;
-
         [StringLength(13)]
         public string Rfc { get; set; } = string.Empty;
+        public ICollection<Carrito> Carrito { get; set; } = new List<Carrito>();
+        public ICollection<Venta> Ventas { get; set; } = new List<Venta>();
     }
 }

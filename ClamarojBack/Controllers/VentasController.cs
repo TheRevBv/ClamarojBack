@@ -7,55 +7,55 @@ namespace ClamarojBack.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolsController : ControllerBase
+    public class VentasController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public RolsController(AppDbContext context)
+        public VentasController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Rols
+        // GET: api/Ventas
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rol>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<Venta>>> GetVentas()
         {
-            if (_context.Roles == null)
+            if (_context.Ventas == null)
             {
                 return NotFound();
             }
-            return await _context.Roles.ToListAsync();
+            return await _context.Ventas.ToListAsync();
         }
 
-        // GET: api/Rols/5
+        // GET: api/Ventas/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Rol>> GetRol(int id)
+        public async Task<ActionResult<Venta>> GetVenta(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Ventas == null)
             {
                 return NotFound();
             }
-            var rol = await _context.Roles.FindAsync(id);
+            var venta = await _context.Ventas.FindAsync(id);
 
-            if (rol == null)
+            if (venta == null)
             {
                 return NotFound();
             }
 
-            return rol;
+            return venta;
         }
 
-        // PUT: api/Rols/5
+        // PUT: api/Ventas/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRol(int id, Rol rol)
+        public async Task<IActionResult> PutVenta(int id, Venta venta)
         {
-            if (id != rol.Id)
+            if (id != venta.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(rol).State = EntityState.Modified;
+            _context.Entry(venta).State = EntityState.Modified;
 
             try
             {
@@ -63,7 +63,7 @@ namespace ClamarojBack.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RolExists(id))
+                if (!VentaExists(id))
                 {
                     return NotFound();
                 }
@@ -76,44 +76,44 @@ namespace ClamarojBack.Controllers
             return NoContent();
         }
 
-        // POST: api/Rols
+        // POST: api/Ventas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Rol>> PostRol(Rol rol)
+        public async Task<ActionResult<Venta>> PostVenta(Venta venta)
         {
-            if (_context.Roles == null)
+            if (_context.Ventas == null)
             {
-                return Problem("Entity set 'AppDbContext.Roles'  is null.");
+                return Problem("Entity set 'AppDbContext.Ventas'  is null.");
             }
-            _context.Roles.Add(rol);
+            _context.Ventas.Add(venta);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRol", new { id = rol.Id }, rol);
+            return CreatedAtAction("GetVenta", new { id = venta.Id }, venta);
         }
 
-        // DELETE: api/Rols/5
+        // DELETE: api/Ventas/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRol(int id)
+        public async Task<IActionResult> DeleteVenta(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Ventas == null)
             {
                 return NotFound();
             }
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null)
+            var venta = await _context.Ventas.FindAsync(id);
+            if (venta == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(rol);
+            _context.Ventas.Remove(venta);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RolExists(int id)
+        private bool VentaExists(int id)
         {
-            return (_context.Roles?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Ventas?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

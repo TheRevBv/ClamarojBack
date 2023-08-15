@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using ClamarojBack.Context;
+﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
+using ClamarojBack.Utils;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
@@ -15,10 +11,12 @@ namespace ClamarojBack.Controllers
     public class ProductosController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
 
-        public ProductosController(AppDbContext context)
+        public ProductosController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Productos
@@ -29,8 +27,11 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            
-            return await _context.Productos.ToListAsync();
+
+            //return await _context.Productos.ToListAsync();
+            var productos = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetProductos", null);
+
+            return Ok(productos);
         }
 
         // GET: api/Productos/5
@@ -121,7 +122,7 @@ namespace ClamarojBack.Controllers
 
         private bool ProductoExists(int id)
         {
-          return (_context.Productos?.Any(e => e.IdProducto == id)).GetValueOrDefault();
+            return (_context.Productos?.Any(e => e.IdProducto == id)).GetValueOrDefault();
         }
     }
 }

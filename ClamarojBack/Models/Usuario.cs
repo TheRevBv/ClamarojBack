@@ -1,8 +1,5 @@
-﻿using System.Reflection.Metadata;
-using System;
-using System.Collections.Generic;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
 
 namespace ClamarojBack.Models
 {
@@ -21,8 +18,9 @@ namespace ClamarojBack.Models
         //Imagen de perfil
         [Column(TypeName = "TEXT")]
         public string Foto { get; set; } = string.Empty;
-        [DataType(DataType.Date)]
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaNacimiento { get; set; } = Convert.ToDateTime("01/01/1900");
+        [Column(TypeName = "DATETIME")]
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
         public int IdStatus { get; set; } = 1;
         public ICollection<RolUsuario> RolesUsuario { get; set; } = new List<RolUsuario>();

@@ -8,7 +8,7 @@ namespace ClamarojBack.Dtos
         public string Direccion { get; set; } = string.Empty;
         public string Correo { get; set; } = string.Empty;
         public string Telefono { get; set; } = string.Empty;
-        public int IdStatus { get; set; } 
+        public int IdStatus { get; set; }
     }
 
     public class ProveedorDto

@@ -1,7 +1,5 @@
-﻿using Microsoft.CodeAnalysis.FlowAnalysis.DataFlow;
-using Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Xml;
 
 namespace ClamarojBack.Utils
 {
@@ -52,34 +50,40 @@ namespace ClamarojBack.Utils
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                throw;
+                throw new Exception(ex.Message, ex);
             }
             return results;
         }
 
-        public String CallSqlFunctionValue(string functionName, SqlParameter[]? parameters)
+        public async Task<string> CallSqlFunctionValueAsync(string functionName, SqlParameter[]? parameters)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             using SqlConnection connection = new(connectionString);
-            using SqlCommand command = new(functionName, connection);
-            command.CommandType = CommandType.StoredProcedure;
+            using var command = connection.CreateCommand();
+            var commandText = $"SELECT * FROM {functionName}(";
 
             if (parameters != null)
             {
+                for (int i = 0; i < parameters.Length; i++)
+                {
+                    commandText += $"{parameters[i].ParameterName},";
+                }
                 command.Parameters.AddRange(parameters);
             }
+            commandText = commandText.TrimEnd(',') + ")";
+            command.CommandText = commandText;
+            command.CommandType = CommandType.Text;
 
-            String result = "";
+            string result = "";
 
             try
             {
-                connection.Open();
-                result = command.ExecuteScalar().ToString()!;
+                await connection.OpenAsync(); // Open the connection asynchronously                
+                result = (await command.ExecuteScalarAsync())!.ToString()!;
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                throw new Exception(ex.Message, ex);
             }
             return result;
         }
@@ -103,8 +107,7 @@ namespace ClamarojBack.Utils
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
-                throw;
+                throw new Exception(ex.Message, ex);
             }
         }
     }

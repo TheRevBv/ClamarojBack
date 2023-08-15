@@ -7,55 +7,55 @@ namespace ClamarojBack.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RolsController : ControllerBase
+    public class CarritosController : ControllerBase
     {
         private readonly AppDbContext _context;
 
-        public RolsController(AppDbContext context)
+        public CarritosController(AppDbContext context)
         {
             _context = context;
         }
 
-        // GET: api/Rols
+        // GET: api/Carritoes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Rol>>> GetRoles()
+        public async Task<ActionResult<IEnumerable<Carrito>>> GetCarritos()
         {
-            if (_context.Roles == null)
+            if (_context.Carritos == null)
             {
                 return NotFound();
             }
-            return await _context.Roles.ToListAsync();
+            return await _context.Carritos.ToListAsync();
         }
 
-        // GET: api/Rols/5
+        // GET: api/Carritoes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Rol>> GetRol(int id)
+        public async Task<ActionResult<Carrito>> GetCarrito(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Carritos == null)
             {
                 return NotFound();
             }
-            var rol = await _context.Roles.FindAsync(id);
+            var carrito = await _context.Carritos.FindAsync(id);
 
-            if (rol == null)
+            if (carrito == null)
             {
                 return NotFound();
             }
 
-            return rol;
+            return carrito;
         }
 
-        // PUT: api/Rols/5
+        // PUT: api/Carritoes/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRol(int id, Rol rol)
+        public async Task<IActionResult> PutCarrito(int id, Carrito carrito)
         {
-            if (id != rol.Id)
+            if (id != carrito.IdCarrito)
             {
                 return BadRequest();
             }
 
-            _context.Entry(rol).State = EntityState.Modified;
+            _context.Entry(carrito).State = EntityState.Modified;
 
             try
             {
@@ -63,7 +63,7 @@ namespace ClamarojBack.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RolExists(id))
+                if (!CarritoExists(id))
                 {
                     return NotFound();
                 }
@@ -76,44 +76,44 @@ namespace ClamarojBack.Controllers
             return NoContent();
         }
 
-        // POST: api/Rols
+        // POST: api/Carritoes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Rol>> PostRol(Rol rol)
+        public async Task<ActionResult<Carrito>> PostCarrito(Carrito carrito)
         {
-            if (_context.Roles == null)
+            if (_context.Carritos == null)
             {
-                return Problem("Entity set 'AppDbContext.Roles'  is null.");
+                return Problem("Entity set 'AppDbContext.Carritos'  is null.");
             }
-            _context.Roles.Add(rol);
+            _context.Carritos.Add(carrito);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRol", new { id = rol.Id }, rol);
+            return CreatedAtAction("GetCarrito", new { id = carrito.IdCarrito }, carrito);
         }
 
-        // DELETE: api/Rols/5
+        // DELETE: api/Carritoes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRol(int id)
+        public async Task<IActionResult> DeleteCarrito(int id)
         {
-            if (_context.Roles == null)
+            if (_context.Carritos == null)
             {
                 return NotFound();
             }
-            var rol = await _context.Roles.FindAsync(id);
-            if (rol == null)
+            var carrito = await _context.Carritos.FindAsync(id);
+            if (carrito == null)
             {
                 return NotFound();
             }
 
-            _context.Roles.Remove(rol);
+            _context.Carritos.Remove(carrito);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool RolExists(int id)
+        private bool CarritoExists(int id)
         {
-            return (_context.Roles?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Carritos?.Any(e => e.IdCarrito == id)).GetValueOrDefault();
         }
     }
 }

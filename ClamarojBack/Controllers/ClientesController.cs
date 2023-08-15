@@ -1,20 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ClamarojBack.Context;
+﻿using ClamarojBack.Context;
+using ClamarojBack.Dtos;
 using ClamarojBack.Models;
-using Microsoft.AspNetCore.Authorization;
-using ClamarojBack.Models.Responses;
-using Microsoft.Data.SqlClient;
-using Newtonsoft.Json;
-using System.Linq;
 using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
-//using ClamarojBack.Dtos;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {

@@ -11,7 +11,10 @@ namespace ClamarojBack.Models
         public Usuario Usuario { get; set; } = new Usuario();
         public int IdStatus { get; set; } = 1;
         public Estatus Estatus { get; set; } = new Estatus();
+        [Column(TypeName = "DATETIME")]
         public DateTime Fecha { get; set; } = DateTime.Now;
+        [Column(TypeName = "DATETIME")]
+        public DateTime FechaEntrega { get; set; } = DateTime.Now + TimeSpan.FromDays(7);
         [StringLength(45)]
         public string Domicilio { get; set; } = string.Empty;
         [Phone, StringLength(10)]
@@ -29,5 +32,7 @@ namespace ClamarojBack.Models
         [Column(TypeName = "decimal(18,4)")]
         public decimal Total { get; set; } = 0;
         public ICollection<DetallePedido> DetallesPedidos { get; set; } = new List<DetallePedido>();
+        public Venta Venta { get; set; } = new Venta();
+        public Compra Compra { get; set; } = new Compra();
     }
 }
