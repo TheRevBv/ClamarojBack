@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClamarojBack.Models
 {
     public class Venta
     {
+        [Key]
         public int Id { get; set; }
         [Column(TypeName = "DATETIME")]
         public DateTime Fecha { get; set; }
