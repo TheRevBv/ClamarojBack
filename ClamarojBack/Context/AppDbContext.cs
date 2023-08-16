@@ -93,11 +93,11 @@ namespace ClamarojBack.Context
                 .HasForeignKey(dp => new { dp.IdPedido, dp.Fecha })
                 .OnDelete(DeleteBehavior.Restrict)
                 .HasConstraintName("FK_DetallePedido_Pedido");
-            modelBuilder.Entity<DetallePedido>()
-                .HasOne(dp => dp.Producto)
-                .WithMany(p => p.DetallePedidos)
-                .OnDelete(DeleteBehavior.Restrict)
-                .HasForeignKey(dp => dp.IdProducto);
+            //modelBuilder.Entity<DetallePedido>()
+            //    .HasOne(dp => dp.Producto)
+            //    .WithMany(p => p.DetallePedidos)
+            //    .OnDelete(DeleteBehavior.Restrict)
+            //    .HasForeignKey(dp => dp.IdProducto);
             modelBuilder.Entity<Carrito>()
                 .HasOne(c => c.Cliente)
                 .WithMany(c => c.Carrito)

@@ -19,6 +19,5 @@ namespace ClamarojBack.Models
         [Column(TypeName = "decimal(18,4)")]
         public decimal Subtotal { get; set; }
         public Pedido Pedido { get; set; } = null!;
-        public Producto Producto { get; set; } = null!;
     }
 }

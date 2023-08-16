@@ -1,6 +1,10 @@
 ﻿using ClamarojBack.Context;
+using ClamarojBack.Dtos;
 using ClamarojBack.Models;
+using ClamarojBack.Utils;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
@@ -10,10 +14,12 @@ namespace ClamarojBack.Controllers
     public class VentasController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
 
-        public VentasController(AppDbContext context)
+        public VentasController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Ventas
@@ -24,7 +30,9 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            return await _context.Ventas.ToListAsync();
+            var ventas = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetVentas", null);
+
+            return Ok(ventas);
         }
 
         // GET: api/Ventas/5
