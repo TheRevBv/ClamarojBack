@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClamarojBack.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230810062954_RelacionMPconPyUM")]
-    partial class RelacionMPconPyUM
+    [Migration("20230818182258_FixForeignKeyProductoInDetail")]
+    partial class FixForeignKeyProductoInDetail
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,8 +67,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Direccion")
                         .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
@@ -148,8 +148,6 @@ namespace ClamarojBack.Migrations
                         .HasColumnType("decimal(18,4)");
 
                     b.HasKey("IdDetallePedido");
-
-                    b.HasIndex("IdProducto");
 
                     b.HasIndex("IdPedido", "Fecha");
 
@@ -274,8 +272,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Domicilio")
                         .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<DateTime>("FechaEntrega")
                         .HasColumnType("DATETIME");
@@ -386,8 +384,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Direccion")
                         .IsRequired()
-                        .HasMaxLength(45)
-                        .HasColumnType("nvarchar(45)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("IdUsuario")
                         .HasColumnType("int");
@@ -431,8 +429,8 @@ namespace ClamarojBack.Migrations
 
                     b.Property<string>("Codigo")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<decimal>("Costo")
                         .HasColumnType("decimal(18,2)");
@@ -658,12 +656,6 @@ namespace ClamarojBack.Migrations
 
             modelBuilder.Entity("ClamarojBack.Models.DetallePedido", b =>
                 {
-                    b.HasOne("ClamarojBack.Models.Producto", "Producto")
-                        .WithMany("DetallePedidos")
-                        .HasForeignKey("IdProducto")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("ClamarojBack.Models.Pedido", "Pedido")
                         .WithMany("DetallesPedidos")
                         .HasForeignKey("IdPedido", "Fecha")
@@ -672,8 +664,6 @@ namespace ClamarojBack.Migrations
                         .HasConstraintName("FK_DetallePedido_Pedido");
 
                     b.Navigation("Pedido");
-
-                    b.Navigation("Producto");
                 });
 
             modelBuilder.Entity("ClamarojBack.Models.Ingrediente", b =>
@@ -824,8 +814,6 @@ namespace ClamarojBack.Migrations
             modelBuilder.Entity("ClamarojBack.Models.Producto", b =>
                 {
                     b.Navigation("Carrito");
-
-                    b.Navigation("DetallePedidos");
 
                     b.Navigation("Receta");
                 });

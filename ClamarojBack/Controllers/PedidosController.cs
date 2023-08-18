@@ -104,7 +104,7 @@ namespace ClamarojBack.Controllers
                     new SqlParameter("@IdStatus", pedido.IdStatus),
                     new SqlParameter("@Fecha",pedido.Fecha),
                     new SqlParameter("@FechaEntrega", pedido.FechaEntrega),
-                    new SqlParameter("@Direccion", pedido.Domicilio),
+                    new SqlParameter("@Domicilio", pedido.Domicilio),
                     new SqlParameter("@Telefono", pedido.Telefono),
                     new SqlParameter("@RazonSocial", pedido.RazonSocial),
                     new SqlParameter("@Rfc", pedido.Rfc),
@@ -123,7 +123,7 @@ namespace ClamarojBack.Controllers
                     {
                         new SqlParameter("@Id", detallePedido.IdDetallePedido),
                         new SqlParameter("@IdPedido", pedido.IdPedido),
-                        new SqlParameter("@Fecha", detallePedido.Fecha),
+                        new SqlParameter("@Fecha", pedido.Fecha),
                         new SqlParameter("@IdProducto", detallePedido.IdProducto),
                         new SqlParameter("@Cantidad", detallePedido.Cantidad),
                         new SqlParameter("@PrecioUnitario", detallePedido.PrecioUnitario),
@@ -132,22 +132,22 @@ namespace ClamarojBack.Controllers
                     total += detallePedido.Subtotal;
                 });
 
-                await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
-                {
-                    new SqlParameter("@Id",pedido!.IdPedido),
-                    new SqlParameter("@IdUsuario",pedido.IdUsuario),
-                    new SqlParameter("@IdStatus", pedido.IdStatus),
-                    new SqlParameter("@Fecha", pedido.Fecha),
-                    new SqlParameter("@FechaEntrega", pedido.FechaEntrega),
-                    new SqlParameter("@Direccion", pedido.Domicilio),
-                    new SqlParameter("@Telefono", pedido.Telefono),
-                    new SqlParameter("@RazonSocial", pedido.RazonSocial),
-                    new SqlParameter("@Rfc", pedido.Rfc),
-                    new SqlParameter("TipoPago", pedido.TipoPago),
-                    new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
-                    new SqlParameter("@TipoPedido", pedido.TipoPedido),
-                    new SqlParameter("@Total",total),
-                });
+                //await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
+                //{
+                //    new SqlParameter("@Id",pedido!.IdPedido),
+                //    new SqlParameter("@IdUsuario",pedido.IdUsuario),
+                //    new SqlParameter("@IdStatus", pedido.IdStatus),
+                //    new SqlParameter("@Fecha", pedido.Fecha),
+                //    new SqlParameter("@FechaEntrega", pedido.FechaEntrega),
+                //    new SqlParameter("@Domicilio", pedido.Domicilio),
+                //    new SqlParameter("@Telefono", pedido.Telefono),
+                //    new SqlParameter("@RazonSocial", pedido.RazonSocial),
+                //    new SqlParameter("@Rfc", pedido.Rfc),
+                //    new SqlParameter("TipoPago", pedido.TipoPago),
+                //    new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
+                //    new SqlParameter("@TipoPedido", pedido.TipoPedido),
+                //    new SqlParameter("@Total",total),
+                //});
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -203,7 +203,7 @@ namespace ClamarojBack.Controllers
                     {
                         new SqlParameter("@Id", detallePedido.IdDetallePedido),
                         new SqlParameter("@IdPedido", pedidoINS!.IdPedido),
-                        new SqlParameter("@Fecha", detallePedido.Fecha),
+                        new SqlParameter("@Fecha", pedidoINS.Fecha),
                         new SqlParameter("@IdProducto", detallePedido.IdProducto),
                         new SqlParameter("@Cantidad", detallePedido.Cantidad),
                         new SqlParameter("@PrecioUnitario", detallePedido.PrecioUnitario),
@@ -212,22 +212,22 @@ namespace ClamarojBack.Controllers
                     total += detallePedido.Subtotal;
                 });
 
-                await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
-                {
-                    new SqlParameter("@Id",pedidoINS!.IdPedido),
-                    new SqlParameter("@IdUsuario",pedidoINS.IdUsuario),
-                    new SqlParameter("@IdStatus", pedidoINS.IdStatus),
-                    new SqlParameter("@Fecha", pedidoINS.Fecha),
-                    new SqlParameter("@FechaEntrega", pedidoINS.FechaEntrega),
-                    new SqlParameter("@Domicilio", pedidoINS.Domicilio),
-                    new SqlParameter("@Telefono", pedidoINS.Telefono),
-                    new SqlParameter("@RazonSocial", pedidoINS.RazonSocial),
-                    new SqlParameter("@Rfc", pedidoINS.Rfc),
-                    new SqlParameter("TipoPago", pedidoINS.TipoPago),
-                    new SqlParameter("@TipoEnvio", pedidoINS.TipoEnvio),
-                    new SqlParameter("@TipoPedido", pedidoINS.TipoPedido),
-                    new SqlParameter("@Total",total),
-                });
+                //await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
+                //{
+                //    new SqlParameter("@Id",pedidoINS!.IdPedido),
+                //    new SqlParameter("@IdUsuario",pedidoINS.IdUsuario),
+                //    new SqlParameter("@IdStatus", pedidoINS.IdStatus),
+                //    new SqlParameter("@Fecha", pedidoINS.Fecha),
+                //    new SqlParameter("@FechaEntrega", pedidoINS.FechaEntrega),
+                //    new SqlParameter("@Domicilio", pedidoINS.Domicilio),
+                //    new SqlParameter("@Telefono", pedidoINS.Telefono),
+                //    new SqlParameter("@RazonSocial", pedidoINS.RazonSocial),
+                //    new SqlParameter("@Rfc", pedidoINS.Rfc),
+                //    new SqlParameter("TipoPago", pedidoINS.TipoPago),
+                //    new SqlParameter("@TipoEnvio", pedidoINS.TipoEnvio),
+                //    new SqlParameter("@TipoPedido", pedidoINS.TipoPedido),
+                //    new SqlParameter("@Total",total),
+                //});
             }
             catch (DbUpdateException)
             {

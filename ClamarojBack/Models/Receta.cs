@@ -8,7 +8,7 @@ namespace ClamarojBack.Models
     {
         [Key]
         public int IdReceta { get; set; }
-        [StringLength(10)]
+        [StringLength(25)]
         public string Codigo { get; set; } = string.Empty;
         [Column(TypeName = "decimal(18,2)")]
         public decimal Costo { get; set; } = 0;

@@ -15,7 +15,7 @@ namespace ClamarojBack.Models
         public DateTime Fecha { get; set; } = DateTime.Now;
         [Column(TypeName = "DATETIME")]
         public DateTime FechaEntrega { get; set; } = DateTime.Now + TimeSpan.FromDays(7);
-        [StringLength(45)]
+        [StringLength(255)]
         public string Domicilio { get; set; } = string.Empty;
         [Phone, StringLength(10)]
         public string Telefono { get; set; } = string.Empty;
