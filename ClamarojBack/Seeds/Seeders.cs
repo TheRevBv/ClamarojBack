@@ -21,8 +21,8 @@ namespace ClamarojBack
             SeedClientes();
             SeedRolesUsuarios();
             SeedUnidadesMedida();
-            SeedMateriasPrimas();
-            SeedProductos();
+            //SeedMateriasPrimas();
+            //SeedProductos();
             // SeedRecetas();
             // SeedPedidos();
             // SeedDetallePedidos();		
@@ -197,18 +197,18 @@ namespace ClamarojBack
                 context.MateriasPrimas.Add(
                 new MateriaPrima
                 {
-                    Codigo = "EJEMPLOM",
-                    Nombre = "Materia Prima Test",
-                    Descripcion = "Ejemplo",
-                    Perecedero = 10,
+                    Codigo = "MP00000001",
+                    Nombre = "Semillas Girasol",
+                    Descripcion = "Deliciosas Semillas",
+                    Perecedero = 30,
                     Stock = 10,
                     CantMinima = 5,
                     CantMaxima = 100,
                     IdUnidadMedida = 1, //KG
-                    UnidadMedida = unidadMedida,
+                    UnidadMedida = unidadMedida!,
                     Precio = 50,
                     IdProveedor = 1,
-                    Proveedor = proveedor,
+                    Proveedor = proveedor!,
                     FechaRegistro = DateTime.Now,
                     IdStatus = 1
                 }
@@ -241,11 +241,11 @@ namespace ClamarojBack
                 context.Productos.Add(
                 new Producto
                 {
-                    Codigo = "EJEMPLOP",
-                    Nombre = "Producto Test",
-                    Descripcion = "Ejemplo",
-                    Precio = 50,
-                    Merma = 4,
+                    Codigo = "P000000001",
+                    Nombre = "Botanita Sabrosa",
+                    Descripcion = "Una rica botana para empezar",
+                    Precio = 30,
+                    Merma = 1,
                     FechaRegistro = DateTime.Now,
                     IdStatus = 1
                 }

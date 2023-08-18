@@ -25,7 +25,7 @@ namespace ClamarojBack.Models
         public DateTime FechaRegistro { get; set; } = DateTime.Now;
         [Column(TypeName = "DATETIME")]
         public DateTime FechaModificacion { get; set; } = DateTime.Now;
-        public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
+        //public ICollection<DetallePedido> DetallePedidos { get; set; } = new List<DetallePedido>();
         public ICollection<Carrito> Carrito { get; set; } = new List<Carrito>();
         public Receta? Receta { get; set; }
     }

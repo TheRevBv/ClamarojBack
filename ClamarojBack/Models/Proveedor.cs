@@ -8,7 +8,7 @@ namespace ClamarojBack.Models
         public int IdProveedor { get; set; }
         public int IdUsuario { get; set; }
         public Usuario Usuario { get; set; } = new Usuario();
-        [StringLength(45)]
+        [StringLength(255)]
         public string Direccion { get; set; } = string.Empty;
         [Phone, StringLength(10)]
         public string Telefono { get; set; } = string.Empty;
