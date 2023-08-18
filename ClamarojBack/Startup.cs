@@ -24,13 +24,21 @@ namespace ClamarojBack
             var misReglasCors = "ReglasCorsAngular";
             services.AddCors(options =>
             {
-                options.AddPolicy(
-                    name: misReglasCors,
+                var frontendURL = Configuration.GetValue<string>("frontend_url");
+                options.AddDefaultPolicy(
                     builder =>
                     {
                         builder.WithOrigins("http://localhost:4200")
                                .AllowAnyHeader()
                                .AllowAnyMethod();
+                    });
+
+                options.AddPolicy("AllowFlutterApp",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
                     });
             });
 
@@ -108,7 +116,7 @@ namespace ClamarojBack
 
             app.UseAuthentication();
             app.UseAuthorization();
-            app.UseCors("ReglasCorsAngular");
+            app.UseCors("AllowFlutterApp");
 
             app.UseEndpoints(endpoints =>
             {
