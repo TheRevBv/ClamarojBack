@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -540,7 +539,7 @@ namespace ClamarojBack.Migrations
                 unique: true);
 
             AgregarStoredProcedures(migrationBuilder);
-            
+
         }
 
         /// <inheritdoc />
@@ -596,7 +595,7 @@ namespace ClamarojBack.Migrations
 
             EliminarStoredProcedures(migrationBuilder);
         }
-        
+
         protected void AgregarStoredProcedures(MigrationBuilder migrationBuilder)
         {
             //Function to Ids to table
@@ -632,6 +631,7 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("CREATE PROCEDURE dbo.PedidosDEL\r\n    @Id int\r\nAS\r\nBEGIN\r\n    SET NOCOUNT ON;\r\n\tDELETE FROM dbo.DetallePedidos WHERE IdPedido = @Id\r\n\tDELETE FROM dbo.Pedidos WHERE IdPedido = @Id\r\nEND");
             migrationBuilder.Sql("CREATE FUNCTION dbo.fxGetPedidos()\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    SELECT P.IdPedido AS idPedido, \r\n           P.IdUsuario AS idUsuario,\r\n           U.Nombre AS usuarioNombre,\r\n           E.Nombre AS estatus,\r\n           P.Fecha AS fecha, \r\n\t\t   P.FechaEntrega as fechaEntrega,\r\n           P.Domicilio as domicilio, \r\n\t\t   P.Telefono as telefono,\r\n           P.RazonSocial as razonSocial, \r\n\t\t   P.Rfc as rfc,\r\n           P.TipoPago as tipoPago, \r\n\t\t   P.TipoEnvio as tipoEnvio, \r\n\t\t   P.TipoPedido as tipoPedido,\r\n           P.Total as total\r\n    FROM dbo.Pedidos P\r\n    JOIN dbo.Usuarios U ON U.Id = P.IdUsuario\r\n    JOIN dbo.Estatus E ON E.Id = P.IdStatus\r\n)");
             migrationBuilder.Sql("CREATE FUNCTION dbo.fxGetPedido(@Id int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    SELECT P.IdPedido AS idPedido, \r\n           P.IdUsuario AS idUsuario,\r\n\t\t   P.IdStatus as idStatus,\r\n           P.Fecha as fecha, \r\n\t\t   P.FechaEntrega as fechaEntrega,\r\n           P.Domicilio as domicilio, \r\n\t\t   P.Telefono as telefono,\r\n           P.RazonSocial as razonSocial, \r\n\t\t   P.Rfc as rfc,\r\n           TRIM(P.TipoPago) as tipoPago, \r\n\t\t   TRIM(P.TipoEnvio) as tipoEnvio, \r\n\t\t   TRIM(P.TipoPedido) as tipoPedido,\r\n           P.Total as total\r\n    FROM dbo.Pedidos P\r\n    --JOIN dbo.Usuarios U ON U.Id = P.IdUsuario\r\n    --JOIN dbo.Estatus E ON E.Id = P.IdStatus\r\n    WHERE P.IdPedido = @Id\r\n)");
+            migrationBuilder.Sql("CREATE FUNCTION dbo.fxGetPedidosByUsuario(@Id int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    SELECT P.IdPedido AS idPedido, \r\n           P.IdUsuario AS idUsuario,\r\n           P.IdStatus as idStatus,\r\n           P.Fecha as fecha, \r\n           P.FechaEntrega as fechaEntrega,\r\n           P.Domicilio as domicilio, \r\n           P.Telefono as telefono,\r\n           P.RazonSocial as razonSocial, \r\n           P.Rfc as rfc,\r\n           TRIM(P.TipoPago) as tipoPago, \r\n           TRIM(P.TipoEnvio) as tipoEnvio, \r\n           TRIM(P.TipoPedido) as tipoPedido,\r\n           P.Total as total,\r\n\t\t   E.Nombre as estatus\r\n    FROM dbo.Pedidos P\r\n    --JOIN dbo.Usuarios U ON U.Id = P.IdUsuario\r\n    JOIN dbo.Estatus E ON E.Id = P.IdStatus\r\n    WHERE P.IdUsuario = @IdUsuario\r\n\tAND P.TipoPedido = 'C'\r\n)");
 
             //DetallePedidos stored procedures and functions
             migrationBuilder.Sql("CREATE PROCEDURE dbo.DetallePedidosUPD\r\n    @Id int out,\r\n    @Fecha datetime,\r\n    @IdPedido int,\r\n    @IdProducto int,\r\n    @Cantidad int,\r\n    @PrecioUnitario decimal(18,4),\r\n    @Subtotal decimal(18,4)\r\nAS\r\nBEGIN\r\n    SET NOCOUNT ON;\r\n\r\n    IF EXISTS(SELECT * FROM dbo.DetallePedidos WHERE IdDetallePedido = @Id)\r\n    BEGIN\r\n        UPDATE dbo.DetallePedidos\r\n        SET IdProducto = @IdProducto,\r\n            Cantidad = @Cantidad,\r\n            PrecioUnitario = @PrecioUnitario,\r\n            Subtotal = @Subtotal\r\n        WHERE IdPedido = @IdPedido\r\n\t\tAND Fecha = @Fecha\t\t\r\n\t\tAND IdDetallePedido = @Id\r\n    END\r\n    ELSE\r\n    BEGIN\r\n        INSERT INTO dbo.DetallePedidos(Fecha, IdPedido, IdProducto, Cantidad, PrecioUnitario, Subtotal)\r\n        VALUES (@Fecha, @IdPedido, @IdProducto, @Cantidad, @PrecioUnitario, @Subtotal)\r\n\r\n        SET @Id = SCOPE_IDENTITY()\r\n    END\r\n\r\n\tUPDATE dbo.Pedidos \r\n\tSET Total = Total + @Subtotal\r\n\tWHERE IdPedido = @IdPedido\r\n\tAND Fecha = @Fecha\r\n\r\n\tUPDATE dbo.Ventas\r\n\tSET Total = Total + @Subtotal\r\n\tWHERE IdPedido = @IdPedido\r\n\tAND Fecha = @Fecha\r\n\r\n\tUPDATE dbo.Compras\r\n\tSET Total = Total + @Subtotal\r\n\tWHERE IdPedido = @IdPedido\r\n\tAND Fecha = @Fecha\r\n\r\nEND");
@@ -690,6 +690,16 @@ namespace ClamarojBack.Migrations
 
             //Carrito stored procedures and functions
             migrationBuilder.Sql("CREATE FUNCTION [dbo].[fxGetCarritoProductos](@IdCliente int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n\tSELECT \r\n\tT1.IdCarrito as idCarrito,\r\n\tT1.Cantidad as cantidad,\r\n\tT1.IdCliente as idCliente,\r\n\tT1.IdProducto as idProducto,\r\n\tT1.FechaModificacion as fechaModificacion,\r\n\tT1.FechaRegistro as fechaRegistro,\r\n\tT2.Foto as foto , \r\n\tT2.Codigo as codigo, \r\n\tT2.Nombre as nombre, \r\n\tT2.Descripcion as descripcion, \r\n\tT2.Precio as precio\r\n\tFROM [Clamaroj].[dbo].[Carritos] T1\r\n\tINNER JOIN [Clamaroj].[dbo].[Productos] T2 ON T1.IdProducto = T2.IdProducto  \r\n\tWHERE T1.IdCliente = @IdCliente\r\n)");
+
+            //ETL stored procedures and functions (Dashboard)
+            migrationBuilder.Sql("create FUNCTION GetTopClientes\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Cliente, pedidos from topClientes where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION GetTopProductos\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Producto, pedidos from topProductos where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION GetTopVendedores\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Vendedor, pedidos from topVendedores where mes=@mes and anio=@anio\r\n);");
+            migrationBuilder.Sql("create FUNCTION FiltrarVentasPorMesYFecha\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select producto, cantProductos from productosVendidos where mes=@mes and anio=@anio\r\n);");
+            migrationBuilder.Sql("create FUNCTION GetSumVentas\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select suma from sumVentas where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION GetSumGanancias\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select suma from sumGanancias where mes=@mes and anio=@anio\r\n);");
+            migrationBuilder.Sql("create FUNCTION GetGanancias\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select ganancia from ganancias where mes=@mes and anio=@anio\r\n);");
+
         }
 
         protected void EliminarStoredProcedures(MigrationBuilder migrationBuilder)
@@ -717,6 +727,7 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("DROP PROCEDURE dbo.PedidosDEL");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetPedidos");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetPedido");
+            migrationBuilder.Sql("DROP FUNCTION dbo.fxGetPedidosByUsuario");
             migrationBuilder.Sql("DROP PROCEDURE dbo.DetallePedidosUPD");
             migrationBuilder.Sql("DROP PROCEDURE dbo.DetallePedidoDEL");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetDetallesPedido");
@@ -754,6 +765,13 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetRecetas");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetReceta");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetCarritoProductos");
+            migrationBuilder.Sql("DROP FUNCTION dbo.GetTopClientes");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.GetTopProductos");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.GetTopVendedores");
+            migrationBuilder.Sql("DROP FUNCTION dbo.FiltrarVentasPorMesYFecha");
+            migrationBuilder.Sql("DROP FUNCTION dbo.GetSumVentas");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.GetSumGanancias");
+            migrationBuilder.Sql("DROP FUNCTION dbo.GetGanancias");
 
         }
 
