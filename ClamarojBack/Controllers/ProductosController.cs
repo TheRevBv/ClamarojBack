@@ -114,7 +114,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            producto.IdStatus = 0;
+            producto.IdStatus = 2;
             await _context.SaveChangesAsync();
 
             return NoContent();

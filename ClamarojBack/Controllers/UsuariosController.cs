@@ -1,5 +1,6 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Dtos;
+using ClamarojBack.Models;
 using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
-    [EnableCors("ReglasCorsAngular")]
+    [EnableCors("AllowFlutterApp")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -56,6 +57,17 @@ namespace ClamarojBack.Controllers
                 }).ToList();
             }
             return Ok(usuarios);
+        }
+
+        // GET: api/UsuariosP
+        [HttpGet("usuariosp")]
+        public async Task<ActionResult<IEnumerable<Usuario>>> GetUsuariosP()
+        {
+            if (_context.Usuarios == null)
+            {
+                return NotFound();
+            }
+            return Ok(_context.Usuarios.ToList());
         }
 
         // GET: api/Usuarios/5
