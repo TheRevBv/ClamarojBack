@@ -692,13 +692,13 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("CREATE FUNCTION [dbo].[fxGetCarritoProductos](@IdCliente int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n\tSELECT \r\n\tT1.IdCarrito as idCarrito,\r\n\tT1.Cantidad as cantidad,\r\n\tT1.IdCliente as idCliente,\r\n\tT1.IdProducto as idProducto,\r\n\tT1.FechaModificacion as fechaModificacion,\r\n\tT1.FechaRegistro as fechaRegistro,\r\n\tT2.Foto as foto , \r\n\tT2.Codigo as codigo, \r\n\tT2.Nombre as nombre, \r\n\tT2.Descripcion as descripcion, \r\n\tT2.Precio as precio\r\n\tFROM [Clamaroj].[dbo].[Carritos] T1\r\n\tINNER JOIN [Clamaroj].[dbo].[Productos] T2 ON T1.IdProducto = T2.IdProducto  \r\n\tWHERE T1.IdCliente = @IdCliente\r\n)");
 
             //ETL stored procedures and functions (Dashboard)
-            migrationBuilder.Sql("create FUNCTION GetTopClientes\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Cliente, pedidos from topClientes where mes=@mes and anio=@anio\r\n);");
-            //migrationBuilder.Sql("create FUNCTION GetTopProductos\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Producto, pedidos from topProductos where mes=@mes and anio=@anio\r\n);");
-            //migrationBuilder.Sql("create FUNCTION GetTopVendedores\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Vendedor, pedidos from topVendedores where mes=@mes and anio=@anio\r\n);");
-            migrationBuilder.Sql("create FUNCTION FiltrarVentasPorMesYFecha\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select producto, cantProductos from productosVendidos where mes=@mes and anio=@anio\r\n);");
-            migrationBuilder.Sql("create FUNCTION GetSumVentas\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select suma from sumVentas where mes=@mes and anio=@anio\r\n);");
-            //migrationBuilder.Sql("create FUNCTION GetSumGanancias\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select suma from sumGanancias where mes=@mes and anio=@anio\r\n);");
-            migrationBuilder.Sql("create FUNCTION GetGanancias\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select ganancia from ganancias where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION GetTopClientes\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Cliente, pedidos from topClientes where mes=@mes and anio=@anio\r\n);");
+            ////migrationBuilder.Sql("create FUNCTION GetTopProductos\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Producto, pedidos from topProductos where mes=@mes and anio=@anio\r\n);");
+            ////migrationBuilder.Sql("create FUNCTION GetTopVendedores\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Vendedor, pedidos from topVendedores where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION FiltrarVentasPorMesYFecha\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select producto, cantProductos from productosVendidos where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION GetSumVentas\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select suma from sumVentas where mes=@mes and anio=@anio\r\n);");
+            ////migrationBuilder.Sql("create FUNCTION GetSumGanancias\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select suma from sumGanancias where mes=@mes and anio=@anio\r\n);");
+            //migrationBuilder.Sql("create FUNCTION GetGanancias\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select ganancia from ganancias where mes=@mes and anio=@anio\r\n);");
 
         }
 
@@ -765,13 +765,13 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetRecetas");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetReceta");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetCarritoProductos");
-            migrationBuilder.Sql("DROP FUNCTION dbo.GetTopClientes");
-            //migrationBuilder.Sql("DROP FUNCTION dbo.GetTopProductos");
-            //migrationBuilder.Sql("DROP FUNCTION dbo.GetTopVendedores");
-            migrationBuilder.Sql("DROP FUNCTION dbo.FiltrarVentasPorMesYFecha");
-            migrationBuilder.Sql("DROP FUNCTION dbo.GetSumVentas");
-            //migrationBuilder.Sql("DROP FUNCTION dbo.GetSumGanancias");
-            migrationBuilder.Sql("DROP FUNCTION dbo.GetGanancias");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.GetTopClientes");
+            ////migrationBuilder.Sql("DROP FUNCTION dbo.GetTopProductos");
+            ////migrationBuilder.Sql("DROP FUNCTION dbo.GetTopVendedores");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.FiltrarVentasPorMesYFecha");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.GetSumVentas");
+            ////migrationBuilder.Sql("DROP FUNCTION dbo.GetSumGanancias");
+            //migrationBuilder.Sql("DROP FUNCTION dbo.GetGanancias");
 
         }
 
