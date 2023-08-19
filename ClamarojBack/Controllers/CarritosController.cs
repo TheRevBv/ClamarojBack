@@ -1,19 +1,27 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
+using ClamarojBack.Utils;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
+    [EnableCors("ReglasCorsAngular")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class CarritosController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
 
-        public CarritosController(AppDbContext context)
+        public CarritosController(AppDbContext context, IConfiguration configuration)
         {
             _context = context;
+            _sqlUtil = new SqlUtil(configuration);
         }
 
         // GET: api/Carritoes
@@ -43,6 +51,22 @@ namespace ClamarojBack.Controllers
             }
 
             return carrito;
+        }
+
+        [HttpGet("cliente/{idCliente}")]
+        public async Task<ActionResult<IEnumerable<Carrito>>> GetCarritoCliente(int idCliente)
+        {
+            if (idCliente == 0)
+            {
+                return NotFound();
+            }
+            var carrito = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetCarritoProductos",
+            new SqlParameter[]
+            {
+                new SqlParameter("@IdCliente", idCliente)
+            });
+
+            return Ok(carrito);
         }
 
         // PUT: api/Carritoes/5
