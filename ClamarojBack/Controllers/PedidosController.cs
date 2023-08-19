@@ -119,7 +119,7 @@ namespace ClamarojBack.Controllers
 
                 pedido.DetallesPedidos.ToArray().ToList().ForEach(async detallePedido =>
                 {
-                    await _sqlUtil.CallSqlProcedureAsync("dbo.DetallesPedidosUPD", new SqlParameter[]
+                    await _sqlUtil.CallSqlProcedureAsync("dbo.DetallePedidosUPD", new SqlParameter[]
                     {
                         new SqlParameter("@Id", detallePedido.IdDetallePedido),
                         new SqlParameter("@IdPedido", pedido.IdPedido),
@@ -199,7 +199,7 @@ namespace ClamarojBack.Controllers
 
                 pedido.DetallesPedidos.ToArray().ToList().ForEach(async detallePedido =>
                 {
-                    await _sqlUtil.CallSqlProcedureAsync("dbo.DetallesPedidosUPD", new SqlParameter[]
+                    await _sqlUtil.CallSqlProcedureAsync("dbo.DetallePedidosUPD", new SqlParameter[]
                     {
                         new SqlParameter("@Id", detallePedido.IdDetallePedido),
                         new SqlParameter("@IdPedido", pedidoINS!.IdPedido),
@@ -241,7 +241,7 @@ namespace ClamarojBack.Controllers
                 }
             }
 
-            var pedidoDto = await _context.Pedidos.Where(p => p.IdPedido == pedido.IdPedido).FirstOrDefaultAsync();
+            var pedidoDto = _context.Pedidos.OrderByDescending(p => p.IdPedido).FirstOrDefault();
 
             return CreatedAtAction("GetPedido", new { id = pedidoDto!.IdPedido }, pedidoDto);
         }

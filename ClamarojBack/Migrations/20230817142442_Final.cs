@@ -688,6 +688,8 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("CREATE FUNCTION dbo.fxGetRecetas()\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    SELECT R.IdReceta idReceta, \r\n\tR.Codigo codigo, \r\n\tP.Nombre producto,\r\n\tE.Nombre estatus,\r\n\tR.Costo costo,\r\n\tR.Cantidad cantidad\r\n\t--IdProducto, \r\n\t--IdStatus, \t\r\n    FROM dbo.Recetas R\r\n\tJOIN dbo.Productos P\r\n\t\tON P.IdProducto = R.IdProducto\r\n\tJOIN dbo.Estatus E\r\n\t\tON E.Id = R.IdStatus\r\n)");
             migrationBuilder.Sql("CREATE FUNCTION dbo.fxGetReceta(@Id int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    SELECT \r\n\tIdReceta as idReceta, \r\n\tCodigo as codigo,\r\n\tCosto as costo,\r\n\tCantidad as cantidad,\r\n\tIdProducto as idProducto, \r\n\tIdStatus as idStatus\r\n\tFROM dbo.Recetas\r\n\tWHERE IdReceta = @Id\r\n\r\n)");
 
+            //Carrito stored procedures and functions
+            migrationBuilder.Sql("CREATE FUNCTION [dbo].[fxGetCarritoProductos](@IdCliente int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n\tSELECT \r\n\tT1.IdCarrito as idCarrito,\r\n\tT1.Cantidad as cantidad,\r\n\tT1.IdCliente as idCliente,\r\n\tT1.IdProducto as idProducto,\r\n\tT1.FechaModificacion as fechaModificacion,\r\n\tT1.FechaRegistro as fechaRegistro,\r\n\tT2.Foto as foto , \r\n\tT2.Codigo as codigo, \r\n\tT2.Nombre as nombre, \r\n\tT2.Descripcion as descripcion, \r\n\tT2.Precio as precio\r\n\tFROM [Clamaroj].[dbo].[Carritos] T1\r\n\tINNER JOIN [Clamaroj].[dbo].[Productos] T2 ON T1.IdProducto = T2.IdProducto  \r\n\tWHERE T1.IdCliente = @IdCliente\r\n)");
         }
 
         protected void EliminarStoredProcedures(MigrationBuilder migrationBuilder)
@@ -751,6 +753,8 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("DROP PROCEDURE dbo.RecetasDEL");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetRecetas");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetReceta");
+            migrationBuilder.Sql("DROP FUNCTION dbo.fxGetCarritoProductos");
+
         }
 
 
