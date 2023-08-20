@@ -103,7 +103,7 @@ namespace ClamarojBack.Controllers
             }
             catch (System.Exception ex)
             {
-                throw ex;
+                throw new Exception(ex.Message, ex);
             }
         }
 
@@ -127,7 +127,7 @@ namespace ClamarojBack.Controllers
             }
             catch (System.Exception ex)
             {
-                throw ex;
+                throw new Exception(ex.Message, ex);
             }
         }
 

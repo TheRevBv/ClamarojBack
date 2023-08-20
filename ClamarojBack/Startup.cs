@@ -26,7 +26,7 @@ namespace ClamarojBack
             services.AddCors(options =>
             {
                 var frontendURL = Configuration.GetValue<string>("frontend_url");
-                options.AddDefaultPolicy(
+                options.AddPolicy(misReglasCors,
                     builder =>
                     {
                         builder.WithOrigins("http://localhost:4200")
@@ -118,6 +118,7 @@ namespace ClamarojBack
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors("AllowFlutterApp");
+            app.UseCors("ReglasCorsAngular");
 
             app.UseEndpoints(endpoints =>
             {

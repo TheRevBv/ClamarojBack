@@ -67,7 +67,12 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            return Ok(_context.Usuarios.ToList());
+            var usuarios = await _context.Usuarios
+                //.Include(u => u.RolesUsuario)
+                //.ThenInclude(ru => ru.Rol)
+                .ToListAsync();
+
+            return Ok(usuarios);
         }
 
         // GET: api/Usuarios/5
