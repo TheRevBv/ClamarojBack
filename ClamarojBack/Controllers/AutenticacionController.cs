@@ -12,7 +12,7 @@ using System.Text;
 
 namespace ClamarojBack.Controllers
 {
-    [EnableCors("ReglasCorsAngular")]
+    [EnableCors("AllowFlutterApp")]
     [Produces("application/json")]
     [ApiController]
     [Route("api/[controller]")]

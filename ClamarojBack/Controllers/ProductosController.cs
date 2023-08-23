@@ -1,13 +1,17 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
+    [EnableCors("AllowFlutterApp")]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class ProductosController : ControllerBase
     {
         private readonly AppDbContext _context;
