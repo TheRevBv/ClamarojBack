@@ -32,18 +32,18 @@ namespace ClamarojBack.Controllers
         {
             var result = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetProveedores", null);
 
-            var proveedores = result.Select(p => new ProveedoresDto
-            {
-                IdProveedor = Convert.ToInt32(p["IdProveedor"]),
-                Direccion = p["Direccion"].ToString(),
-                Telefono = p["Telefono"].ToString(),
-                Correo = p["Correo"].ToString(),
-                Rfc = p["Rfc"].ToString(),
-                RazonSocial = p["RazonSocial"].ToString(),
-                IdStatus = Convert.ToInt32(p["IdStatus"])
-            }).ToList();
+            //var proveedores = result.Select(p => new ProveedoresDto
+            //{
+            //    IdProveedor = Convert.ToInt32(p["IdProveedor"]),
+            //    Direccion = p["Direccion"].ToString(),
+            //    Telefono = p["Telefono"].ToString(),
+            //    Correo = p["Correo"].ToString(),
+            //    Rfc = p["Rfc"].ToString(),
+            //    RazonSocial = p["RazonSocial"].ToString(),
+            //    IdStatus = Convert.ToInt32(p["IdStatus"])
+            //}).ToList();            
 
-            return Ok(proveedores);
+            return Ok(result);
 
         }
 
@@ -60,33 +60,33 @@ namespace ClamarojBack.Controllers
                 new SqlParameter("@Id", id)
             });
 
-            var proveedorDto = proveedor.Select(p => new ProveedorDto
-            {
-                IdProveedor = Convert.ToInt32(p["IdProveedor"]),
-                Direccion = p["Direccion"].ToString(),
-                Telefono = p["Telefono"].ToString(),
-                Rfc = p["Rfc"].ToString(),
-                RazonSocial = p["RazonSocial"].ToString(),
-                IdStatus = Convert.ToInt32(p["IdStatus"]),
-                Usuario = new UsuarioDto
-                {
-                    Id = Convert.ToInt32(p["IdUsuario"]),
-                    Nombre = p["Nombre"].ToString(),
-                    Apellido = p["Apellido"].ToString(),
-                    Correo = p["Correo"].ToString(),
-                    Password = p["Password"].ToString(),
-                    FechaNacimiento = Convert.ToDateTime(p["FechaNacimiento"]),
-                    Foto = p["Foto"].ToString(),
-                    IdStatus = Convert.ToInt32(p["IdStatus"])
-                }
-            }).FirstOrDefault();
+            //var proveedorDto = proveedor.Select(p => new ProveedorDto
+            //{
+            //    IdProveedor = Convert.ToInt32(p["IdProveedor"]),
+            //    Direccion = p["Direccion"].ToString(),
+            //    Telefono = p["Telefono"].ToString(),
+            //    Rfc = p["Rfc"].ToString(),
+            //    RazonSocial = p["RazonSocial"].ToString(),
+            //    IdStatus = Convert.ToInt32(p["IdStatus"]),
+            //    Usuario = new UsuarioDto
+            //    {
+            //        Id = Convert.ToInt32(p["IdUsuario"]),
+            //        Nombre = p["Nombre"].ToString(),
+            //        Apellido = p["Apellido"].ToString(),
+            //        Correo = p["Correo"].ToString(),
+            //        Password = p["Password"].ToString(),
+            //        FechaNacimiento = Convert.ToDateTime(p["FechaNacimiento"]),
+            //        Foto = p["Foto"].ToString(),
+            //        IdStatus = Convert.ToInt32(p["IdStatus"])
+            //    }
+            //}).FirstOrDefault();
 
             if (proveedor == null)
             {
                 return NotFound();
             }
 
-            return Ok(proveedorDto);
+            return Ok(proveedor[0]);
         }
 
         // PUT: api/Proveedores/5
