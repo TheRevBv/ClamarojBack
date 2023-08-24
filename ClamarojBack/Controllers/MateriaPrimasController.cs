@@ -156,7 +156,13 @@ namespace ClamarojBack.Controllers
                 }
             }
 
-            return NoContent();
+            var res = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetMateriaPrima",
+            new SqlParameter[]
+            {
+                new SqlParameter("@Id", id)
+            });
+
+            return Ok(res[0]);
         }
 
         // DELETE: api/MateriasPrimas/5
