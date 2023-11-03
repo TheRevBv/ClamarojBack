@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace ClamarojBack.Controllers
 {
 
-    [EnableCors("ReglasCorsAngular")]
+    [EnableCors("AllowFlutterApp")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -32,18 +32,18 @@ namespace ClamarojBack.Controllers
         {
             var result = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetProveedores", null);
 
-            var proveedores = result.Select(p => new ProveedoresDto
-            {
-                IdProveedor = Convert.ToInt32(p["IdProveedor"]),
-                Direccion = p["Direccion"].ToString(),
-                Telefono = p["Telefono"].ToString(),
-                Correo = p["Correo"].ToString(),
-                Rfc = p["Rfc"].ToString(),
-                RazonSocial = p["RazonSocial"].ToString(),
-                IdStatus = Convert.ToInt32(p["IdStatus"])
-            }).ToList();
+            //var proveedores = result.Select(p => new ProveedoresDto
+            //{
+            //    IdProveedor = Convert.ToInt32(p["IdProveedor"]),
+            //    Direccion = p["Direccion"].ToString(),
+            //    Telefono = p["Telefono"].ToString(),
+            //    Correo = p["Correo"].ToString(),
+            //    Rfc = p["Rfc"].ToString(),
+            //    RazonSocial = p["RazonSocial"].ToString(),
+            //    IdStatus = Convert.ToInt32(p["IdStatus"])
+            //}).ToList();            
 
-            return Ok(proveedores);
+            return Ok(result);
 
         }
 
@@ -60,33 +60,33 @@ namespace ClamarojBack.Controllers
                 new SqlParameter("@Id", id)
             });
 
-            var proveedorDto = proveedor.Select(p => new ProveedorDto
-            {
-                IdProveedor = Convert.ToInt32(p["IdProveedor"]),
-                Direccion = p["Direccion"].ToString(),
-                Telefono = p["Telefono"].ToString(),
-                Rfc = p["Rfc"].ToString(),
-                RazonSocial = p["RazonSocial"].ToString(),
-                IdStatus = Convert.ToInt32(p["IdStatus"]),
-                Usuario = new UsuarioDto
-                {
-                    Id = Convert.ToInt32(p["IdUsuario"]),
-                    Nombre = p["Nombre"].ToString(),
-                    Apellido = p["Apellido"].ToString(),
-                    Correo = p["Correo"].ToString(),
-                    Password = p["Password"].ToString(),
-                    FechaNacimiento = Convert.ToDateTime(p["FechaNacimiento"]),
-                    Foto = p["Foto"].ToString(),
-                    IdStatus = Convert.ToInt32(p["IdStatus"])
-                }
-            }).FirstOrDefault();
+            //var proveedorDto = proveedor.Select(p => new ProveedorDto
+            //{
+            //    IdProveedor = Convert.ToInt32(p["IdProveedor"]),
+            //    Direccion = p["Direccion"].ToString(),
+            //    Telefono = p["Telefono"].ToString(),
+            //    Rfc = p["Rfc"].ToString(),
+            //    RazonSocial = p["RazonSocial"].ToString(),
+            //    IdStatus = Convert.ToInt32(p["IdStatus"]),
+            //    Usuario = new UsuarioDto
+            //    {
+            //        Id = Convert.ToInt32(p["IdUsuario"]),
+            //        Nombre = p["Nombre"].ToString(),
+            //        Apellido = p["Apellido"].ToString(),
+            //        Correo = p["Correo"].ToString(),
+            //        Password = p["Password"].ToString(),
+            //        FechaNacimiento = Convert.ToDateTime(p["FechaNacimiento"]),
+            //        Foto = p["Foto"].ToString(),
+            //        IdStatus = Convert.ToInt32(p["IdStatus"])
+            //    }
+            //}).FirstOrDefault();
 
             if (proveedor == null)
             {
                 return NotFound();
             }
 
-            return Ok(proveedorDto);
+            return Ok(proveedor[0]);
         }
 
         // PUT: api/Proveedores/5
@@ -202,6 +202,129 @@ namespace ClamarojBack.Controllers
             }).FirstOrDefaultAsync();
 
             return Ok(prov);
+        }
+
+        [HttpPut("prov/{id}")]
+        public async Task<IActionResult> PutProvider(int id, ProviderDto proveedor)
+        {
+            var encriptador = new SecurityUtil();
+            if (id != proveedor.IdProveedor)
+            {
+                return BadRequest();
+            }
+
+            var proveedorDB = await _context.Proveedores.Include(c => c.Usuario).FirstOrDefaultAsync(p => p.IdProveedor == id);
+
+            if (proveedorDB == null)
+            {
+                return NotFound();
+            }
+
+            if (proveedor.Password != proveedorDB.Usuario.Password)
+            {
+                proveedor.Password = encriptador.HashPassword(proveedor.Password!);
+            }
+            else
+            {
+                proveedor.Password = proveedorDB.Usuario.Password;
+            }
+            DateTime fechaNacimiento = Convert.ToDateTime(proveedor.FechaNacimiento);
+            try
+            {
+                await _sqlUtil.CallSqlProcedureAsync("dbo.ProveedoresUPD",
+                new SqlParameter[] {
+                    new SqlParameter("@Id", proveedor.IdProveedor),
+                    new SqlParameter("@Direccion", proveedor.Direccion),
+                    new SqlParameter("@Telefono", proveedor.Telefono),
+                    new SqlParameter("@Rfc", proveedor.Rfc),
+                    new SqlParameter("@RazonSocial", proveedor.RazonSocial),
+                    new SqlParameter("@Nombre", proveedor.Nombre),
+                    new SqlParameter("@Apellido", proveedor.Apellido),
+                    new SqlParameter("@Correo", proveedor.Correo),
+                    new SqlParameter("@Password", proveedor.Password),
+                    new SqlParameter("@FechaNacimiento", fechaNacimiento),
+                    new SqlParameter("@Foto", proveedor.Foto),
+                    new SqlParameter("@IdStatus", proveedor.IdStatus),
+                    new SqlParameter("@IdUsuario", proveedor.IdUsuario)
+                });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProveedorExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            var res = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetProveedor", new SqlParameter[]
+            {
+                new SqlParameter("@Id", proveedor.IdProveedor)
+            });
+
+            return Ok(res[0]);
+        }
+
+        // POST: api/Proveedores
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost("prov")]
+        public async Task<ActionResult<Proveedor>> PostProvider(ProviderDto proveedor)
+        {
+            var encriptador = new SecurityUtil();
+            if (_context.Proveedores == null)
+            {
+                return Problem("Entity set 'AppDbContext.Proveedores'  is null.");
+            }
+            // _context.Proveedores.Add(proveedor);
+            DateTime fechaNac = Convert.ToDateTime(proveedor.FechaNacimiento);
+            await _sqlUtil.CallSqlProcedureAsync("dbo.ProveedoresUPD",
+                new SqlParameter[] {
+                    new SqlParameter("@Id", proveedor.IdProveedor),
+                    new SqlParameter("@Direccion", proveedor.Direccion),
+                    new SqlParameter("@Telefono", proveedor.Telefono),
+                    new SqlParameter("@Rfc", proveedor.Rfc),
+                    new SqlParameter("@RazonSocial", proveedor.RazonSocial),
+                    new SqlParameter("@Nombre", proveedor.Nombre),
+                    new SqlParameter("@Apellido", proveedor.Apellido),
+                    new SqlParameter("@Correo", proveedor.Correo),
+                    new SqlParameter("@Password", encriptador.HashPassword(proveedor.Password!)),
+                    new SqlParameter("@FechaNacimiento", fechaNac),
+                    new SqlParameter("@Foto", proveedor.Foto),
+                    new SqlParameter("@IdStatus", proveedor.IdStatus),
+                    new SqlParameter("@IdUsuario", proveedor.IdUsuario),
+                });
+
+            var prov = await _context.Proveedores
+            .Where(p => p.Usuario.Correo == proveedor.Correo)
+            .Select(p => new ProveedorDto
+            {
+                IdProveedor = p.IdProveedor,
+                Direccion = p.Direccion,
+                Telefono = p.Telefono,
+                Rfc = p.Rfc,
+                RazonSocial = p.RazonSocial,
+                Usuario = new UsuarioDto
+                {
+                    Nombre = p.Usuario.Nombre,
+                    Apellido = p.Usuario.Apellido,
+                    Correo = p.Usuario.Correo,
+                    Password = p.Usuario.Password,
+                    FechaNacimiento = p.Usuario.FechaNacimiento,
+                    Foto = p.Usuario.Foto,
+                    IdStatus = p.Usuario.IdStatus,
+                    // Roles = new List<RolDto>()
+                }
+            }).FirstOrDefaultAsync();
+
+            var res = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetProveedor", new SqlParameter[]
+            {
+                new SqlParameter("@Id", prov!.IdProveedor)
+            });
+
+            return Ok(res[0]);
         }
 
         // DELETE: api/Proveedores/5
