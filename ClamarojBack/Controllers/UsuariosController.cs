@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
-    [EnableCors("AllowFlutterApp")]
+    [EnableCors("ReglasCorsAngular")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
@@ -32,31 +32,15 @@ namespace ClamarojBack.Controllers
             //COnsulta usando una funcion de tabla de sql server
             var result = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetUsuarios", null);
 
-            var usuarios = result.Select(r => new UsuariosDto
-            {
-                Id = Convert.ToInt32(r["Id"]),
-                Nombre = r["Nombre"].ToString(),
-                Apellido = r["Apellido"].ToString(),
-                Correo = r["Correo"].ToString(),
-                FechaNacimiento = Convert.ToDateTime(r["FechaNacimiento"]),
-                Foto = r["Foto"].ToString(),
-                Estatus = r["Estatus"].ToString(),
-                IdStatus = Convert.ToInt32(r["IdStatus"]),
-                Roles = new List<RolDto>()
-            }).ToList();
-
-            foreach (var usuario in usuarios)
+            foreach (var usuario in result)
             {
                 var roles = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetRolesUsuario", new SqlParameter[] {
-                    new SqlParameter("@IdUsuario", usuario.Id)
+                    new("@IdUsuario", usuario["id"])
                 });
-                usuario.Roles = roles.Select(r => new RolDto
-                {
-                    Id = Convert.ToInt32(r["Id"]),
-                    Nombre = r["Nombre"].ToString()
-                }).ToList();
+                usuario["roles"] = roles;
             }
-            return Ok(usuarios);
+
+            return Ok(result);
         }
 
         // GET: api/UsuariosP
@@ -147,15 +131,15 @@ namespace ClamarojBack.Controllers
             {
                 await _sqlUtil.CallSqlProcedureAsync("dbo.UsuariosUPD", new SqlParameter[]
                 {
-                    new SqlParameter("@Id", usuario.Id),
-                    new SqlParameter("@Nombre", usuario.Nombre),
-                    new SqlParameter("@Apellido", usuario.Apellido),
-                    new SqlParameter("@Correo", usuario.Correo),
-                    new SqlParameter("@Password", usuario.Password),
-                    new SqlParameter("@FechaNacimiento", fechaNacimiento),
-                    new SqlParameter("@Foto", usuario.Foto),
-                    new SqlParameter("@IdStatus", usuario.IdStatus),
-                    new SqlParameter("@IdRoles", roles)
+                    new("@Id", usuario.Id),
+                    new("@Nombre", usuario.Nombre),
+                    new("@Apellido", usuario.Apellido),
+                    new("@Correo", usuario.Correo),
+                    new("@Password", usuario.Password),
+                    new("@FechaNacimiento", fechaNacimiento),
+                    new("@Foto", usuario.Foto),
+                    new("@IdStatus", usuario.IdStatus),
+                    new("@IdRoles", roles)
                 });
                 //await _context.SaveChangesAsync();
             }
@@ -194,15 +178,15 @@ namespace ClamarojBack.Controllers
 
             await _sqlUtil.CallSqlProcedureAsync("dbo.UsuariosUPD", new SqlParameter[]
             {
-                new SqlParameter("@Id", usuario.Id),
-                new SqlParameter("@Nombre", usuario.Nombre),
-                new SqlParameter("@Apellido", usuario.Apellido),
-                new SqlParameter("@Correo", usuario.Correo),
-                new SqlParameter("@Password", encriptador.HashPassword(usuario.Password!)),
-                new SqlParameter("@FechaNacimiento", fechaNacimiento),
-                new SqlParameter("@Foto", usuario.Foto),
-                new SqlParameter("@IdRoles" , roles),
-                new SqlParameter("@IdStatus", usuario.IdStatus)
+                new("@Id", usuario.Id),
+                new("@Nombre", usuario.Nombre),
+                new("@Apellido", usuario.Apellido),
+                new("@Correo", usuario.Correo),
+                new("@Password", encriptador.HashPassword(usuario.Password!)),
+                new("@FechaNacimiento", fechaNacimiento),
+                new("@Foto", usuario.Foto),
+                new("@IdRoles" , roles),
+                new("@IdStatus", usuario.IdStatus)
             });
             //Traer el usuario recien creado
             var user = await _context.Usuarios

@@ -35,22 +35,8 @@ namespace ClamarojBack.Controllers
             }
 
             var clientes = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetClientes", null);
-            var clientesRes = clientes.Select(
-                c => new ClientesDto
-                {
-                    IdCliente = Convert.ToInt32(c["IdCliente"]),
-                    Nombre = c["Nombre"].ToString(),
-                    Apellido = c["Apellido"].ToString(),
-                    Rfc = c["Rfc"].ToString(),
-                    Telefono = c["Telefono"].ToString(),
-                    Direccion = c["Direccion"].ToString(),
-                    IdStatus = Convert.ToInt32(c["IdStatus"])
-                }).ToList();
 
-
-            return Ok(clientesRes);
-
-
+            return Ok(clientes);
         }
 
         // GET: api/Clientes/5
@@ -64,35 +50,35 @@ namespace ClamarojBack.Controllers
             // var cliente = await _context.Clientes.FindAsync(id);            
             var cliente = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetCliente",
             new SqlParameter[] {
-                new SqlParameter("@Id", id)
+                new("@Id", id)
             });
 
-            var clienteDto = cliente.Select(
-                c => new ClienteDto
-                {
-                    IdCliente = Convert.ToInt32(c["IdCliente"]),
-                    Rfc = c["Rfc"].ToString(),
-                    Telefono = c["Telefono"].ToString(),
-                    Direccion = c["Direccion"].ToString(),
-                    Usuario = new UsuarioDto
-                    {
-                        Id = Convert.ToInt32(c["IdUsuario"]),
-                        Nombre = c["Nombre"].ToString(),
-                        Apellido = c["Apellido"].ToString(),
-                        Foto = c["Foto"].ToString(),
-                        Correo = c["Correo"].ToString(),
-                        Password = c["Password"].ToString(),
-                        IdStatus = Convert.ToInt32(c["IdStatus"]),
-                        FechaNacimiento = Convert.ToDateTime(c["FechaNacimiento"])
-                    },
-                }).FirstOrDefault();
+            // var clienteDto = cliente.Select(
+            //     c => new ClienteDto
+            //     {
+            //         IdCliente = Convert.ToInt32(c["IdCliente"]),
+            //         Rfc = c["Rfc"].ToString(),
+            //         Telefono = c["Telefono"].ToString(),
+            //         Direccion = c["Direccion"].ToString(),
+            //         Usuario = new UsuarioDto
+            //         {
+            //             Id = Convert.ToInt32(c["IdUsuario"]),
+            //             Nombre = c["Nombre"].ToString(),
+            //             Apellido = c["Apellido"].ToString(),
+            //             Foto = c["Foto"].ToString(),
+            //             Correo = c["Correo"].ToString(),
+            //             Password = c["Password"].ToString(),
+            //             IdStatus = Convert.ToInt32(c["IdStatus"]),
+            //             FechaNacimiento = Convert.ToDateTime(c["FechaNacimiento"])
+            //         },
+            //     }).FirstOrDefault();
 
-            if (clienteDto == null)
+            if (cliente == null)
             {
                 return NotFound();
             }
 
-            return Ok(clienteDto);
+            return Ok(cliente[0]);
         }
 
         [HttpPut("{id}")]
@@ -125,18 +111,18 @@ namespace ClamarojBack.Controllers
             {
                 // await _context.SaveChangesAsync();
                 await _sqlUtil.CallSqlProcedureAsync("dbo.ClientesUPD", new SqlParameter[]{
-                    new SqlParameter("@Id", id),
-                    new SqlParameter("@IdUsuario", clienteDTO.Usuario.Id),
-                    new SqlParameter("@Telefono", clienteDTO.Telefono),
-                    new SqlParameter("@Direccion", clienteDTO.Direccion),
-                    new SqlParameter("@Rfc", clienteDTO.Rfc),
-                    new SqlParameter("@Nombre", clienteDTO.Usuario.Nombre),
-                    new SqlParameter("@Apellido", clienteDTO.Usuario.Apellido),
-                    new SqlParameter("@Correo", clienteDTO.Usuario.Correo),
-                    new SqlParameter("@Password", clienteDTO.Usuario.Password),
-                    new SqlParameter("@Foto", clienteDTO.Usuario.Foto),
-                    new SqlParameter("@FechaNacimiento", fechaNacimiento),
-                    new SqlParameter("@IdStatus", clienteDTO.Usuario.IdStatus),
+                    new("@Id", id),
+                    new("@IdUsuario", clienteDTO.Usuario.Id),
+                    new("@Telefono", clienteDTO.Telefono),
+                    new("@Direccion", clienteDTO.Direccion),
+                    new("@Rfc", clienteDTO.Rfc),
+                    new("@Nombre", clienteDTO.Usuario.Nombre),
+                    new("@Apellido", clienteDTO.Usuario.Apellido),
+                    new("@Correo", clienteDTO.Usuario.Correo),
+                    new("@Password", clienteDTO.Usuario.Password),
+                    new("@Foto", clienteDTO.Usuario.Foto),
+                    new("@FechaNacimiento", fechaNacimiento),
+                    new("@IdStatus", clienteDTO.Usuario.IdStatus),
                 });
             }
             catch (DbUpdateConcurrencyException)
@@ -152,7 +138,7 @@ namespace ClamarojBack.Controllers
             }
             //Traer el cliente recien creado
             var clienteRes = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetCliente", new SqlParameter[]{
-                new SqlParameter("@Id", id)
+                new("@Id", id)
             });
 
             return Ok(clienteRes);
@@ -172,46 +158,26 @@ namespace ClamarojBack.Controllers
 
             await _sqlUtil.CallSqlProcedureAsync("dbo.ClientesUPD",
             new SqlParameter[] {
-                new SqlParameter("@Id", client.IdCliente),
-                new SqlParameter("@Telefono", client.Telefono),
-                new SqlParameter("@Direccion", client.Direccion),
-                new SqlParameter("@Rfc", client.Rfc),
-                new SqlParameter("@Nombre", client.Usuario.Nombre),
-                new SqlParameter("@Apellido", client.Usuario.Apellido),
-                new SqlParameter("@Correo", client.Usuario.Correo),
-                new SqlParameter("@Password", encriptador.HashPassword(client.Usuario.Password)),
-                new SqlParameter("@Foto", client.Usuario.Foto),
-                new SqlParameter("@FechaNacimiento", fechaNacimiento),
-                new SqlParameter("@IdStatus", client.Usuario.IdStatus),
-                new SqlParameter("@IdUsuario", client.Usuario.Id)
+                new("@Id", client.IdCliente),
+                new("@Telefono", client.Telefono),
+                new("@Direccion", client.Direccion),
+                new("@Rfc", client.Rfc),
+                new("@Nombre", client.Usuario.Nombre),
+                new("@Apellido", client.Usuario.Apellido),
+                new("@Correo", client.Usuario.Correo),
+                new("@Password", encriptador.HashPassword(client.Usuario.Password)),
+                new("@Foto", client.Usuario.Foto),
+                new("@FechaNacimiento", fechaNacimiento),
+                new("@IdStatus", client.Usuario.IdStatus),
+                new("@IdUsuario", client.Usuario.Id)
             });
 
-            var clienteRes = await _context.Clientes
-            .Where(cliente => cliente.Usuario.Correo == client.Usuario.Correo)
-            .Join(_context.Usuarios,
-                client => client.IdUsuario,
-                user => user.Id,
-                (client, user) => new ClienteDto
-                {
-                    IdCliente = client.IdCliente,
-                    Telefono = client.Telefono,
-                    Direccion = client.Direccion,
-                    Rfc = client.Rfc,
-                    Usuario = new UsuarioDto
-                    {
-                        Id = user.Id,
-                        Nombre = user.Nombre,
-                        Apellido = user.Apellido,
-                        Correo = user.Correo,
-                        Password = user.Password,
-                        Foto = user.Foto,
-                        FechaNacimiento = user.FechaNacimiento,
-                        FechaRegistro = user.FechaRegistro,
-                        IdStatus = user.IdStatus
-                    }
-                }).FirstOrDefaultAsync(cliente => cliente.IdCliente == client.IdCliente);
+            //Traer el cliente recien creado
+            var clienteRes = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetCliente", new SqlParameter[]{
+                new("@Id", client.IdCliente)
+            });
 
-            return Ok(clienteRes);
+            return Ok(clienteRes[0]);
         }
 
         // DELETE: api/Clientes/5
@@ -230,9 +196,9 @@ namespace ClamarojBack.Controllers
 
             // _context.Clientes.Remove(cliente);
             // await _context.SaveChangesAsync();
-            await _sqlUtil.CallSqlProcedureAsync("dbo.ClienteDEL",
+            await _sqlUtil.CallSqlProcedureAsync("dbo.ClientesDEL",
             new SqlParameter[] {
-                new SqlParameter("@Id", id)
+                new("@Id", id)
                 });
 
 

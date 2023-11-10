@@ -34,13 +34,8 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
             var estatus = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetEstatuses", null);
-            var estatusDto = estatus.Select(e => new EstatusDto
-            {
-                IdEstatus = Convert.ToInt32(e["IdEstatus"]),
-                Nombre = e["Nombre"].ToString(),
-            }).ToList();
 
-            return Ok(estatusDto);
+            return Ok(estatus);
         }
 
         // GET: api/Estatus/5
@@ -52,7 +47,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
             var estatus = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetEstatus", new SqlParameter[] {
-                new SqlParameter("@Id", id)
+                new("@Id", id)
             });
 
             if (estatus == null)
@@ -60,7 +55,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return Ok(estatus);
+            return Ok(estatus[0]);
         }
 
         // PUT: api/Estatus/5
@@ -77,8 +72,8 @@ namespace ClamarojBack.Controllers
             {
                 await _sqlUtil.CallSqlProcedureAsync("dbo.EstatusUPD",
                 new SqlParameter[] {
-                    new SqlParameter("@Id", estatus.Id),
-                    new SqlParameter("@Nombre", estatus.Nombre)
+                    new("@Id", estatus.Id),
+                    new("@Nombre", estatus.Nombre)
                 });
             }
             catch (DbUpdateConcurrencyException)
@@ -107,14 +102,14 @@ namespace ClamarojBack.Controllers
             }
             await _sqlUtil.CallSqlProcedureAsync("dbo.EstatusUPD",
                 new SqlParameter[] {
-                    new SqlParameter("@Id", estatus.Id),
-                    new SqlParameter("@Nombre", estatus.Nombre)
+                    new("@Id", estatus.Id),
+                    new("@Nombre", estatus.Nombre)
                 });
-            var status = _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetEstatus", new SqlParameter[] {
-                new SqlParameter("@Id", estatus.Id)
+            var status = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetEstatus", new SqlParameter[] {
+                new("@Id", estatus.Id)
             });
 
-            return Ok(status);
+            return Ok(status[0]);
         }
 
         // DELETE: api/Estatus/5
@@ -133,7 +128,7 @@ namespace ClamarojBack.Controllers
 
             await _sqlUtil.CallSqlProcedureAsync("dbo.EstatusDEL",
                 new SqlParameter[] {
-                    new SqlParameter("@Id", estatus.Id)
+                    new("@Id", estatus.Id)
                 });
 
             return NoContent();
