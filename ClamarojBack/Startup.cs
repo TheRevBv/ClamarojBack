@@ -25,11 +25,11 @@ namespace ClamarojBack
             var misReglasCors = "ReglasCorsAngular";
             services.AddCors(options =>
             {
-                var frontendURL = Configuration.GetValue<string>("frontend_url");
+                var frontendURL = Configuration.GetValue<string>("frontend_url")!;
                 options.AddPolicy(misReglasCors,
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost:4200")
+                        builder.WithOrigins(frontendURL)
                                .AllowAnyHeader()
                                .AllowAnyMethod();
                     });

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClamarojBack.Controllers
 {
-    [EnableCors("AllowFlutterApp")]
+    [EnableCors("ReglasCorsAngular")]
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
