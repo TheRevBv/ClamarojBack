@@ -693,7 +693,7 @@ namespace ClamarojBack.Migrations
 
             //Carrito stored procedures and functions
             migrationBuilder.Sql("CREATE FUNCTION [dbo].[fxGetCarritoProductos](@IdCliente int)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n\tSELECT \r\n\tT1.IdCarrito as idCarrito,\r\n\tT1.Cantidad as cantidad,\r\n\tT1.IdCliente as idCliente,\r\n\tT1.IdProducto as idProducto,\r\n\tT1.FechaModificacion as fechaModificacion,\r\n\tT1.FechaRegistro as fechaRegistro,\r\n\tT2.Foto as foto , \r\n\tT2.Codigo as codigo, \r\n\tT2.Nombre as nombre, \r\n\tT2.Descripcion as descripcion, \r\n\tT2.Precio as precio\r\n\tFROM [Clamaroj].[dbo].[Carritos] T1\r\n\tINNER JOIN [Clamaroj].[dbo].[Productos] T2 ON T1.IdProducto = T2.IdProducto  \r\n\tWHERE T1.IdCliente = @IdCliente\r\n)");
-
+            migrationBuilder.Sql("CREATE PROCEDURE dbo.CarritoUPD\r\n    @IdCarrito int out,\r\n    @IdCliente int,\r\n    @IdProducto int,\r\n    @Cantidad int\r\nAS\r\nBEGIN\r\n\tDELETE FROM dbo.Carritos where IdCliente = @IdCliente and IdProducto = @IdProducto\r\n\t--IF EXISTS (SELECT IdCarrito FROM Carritos WHERE IdCarrito = @IdCarrito and IdCliente = @IdCliente and IdProducto = @IdProducto)\r\n\t--BEGIN\r\n\t--\tUPDATE dbo.Carritos\r\n\t--\tSET Cantidad = @Cantidad \r\n\t--\t, FechaModificacion = GETDATE()\r\n\t--\tWHERE IdCarrito = @IdCarrito\r\n\t--END\r\n\t--ELSE BEGIN\r\n\t\tINSERT INTO dbo.Carritos(IdCliente, IdProducto, Cantidad, FechaRegistro, FechaModificacion)\r\n\t\tVALUES(@IdCliente, @IdProducto, @Cantidad, GETDATE(), GETDATE())\r\n\t--END\r\nEND");
             //ETL stored procedures and functions (Dashboard)
             //migrationBuilder.Sql("create FUNCTION GetTopClientes\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Cliente, pedidos from topClientes where mes=@mes and anio=@anio\r\n);");
             ////migrationBuilder.Sql("create FUNCTION GetTopProductos\r\n(\r\n    @mes int,\r\n    @anio varchar(50)\r\n)\r\nRETURNS TABLE\r\nAS\r\nRETURN\r\n(\r\n    select Producto, pedidos from topProductos where mes=@mes and anio=@anio\r\n);");
@@ -770,6 +770,7 @@ namespace ClamarojBack.Migrations
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetRecetas");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetReceta");
             migrationBuilder.Sql("DROP FUNCTION dbo.fxGetCarritoProductos");
+            migrationBuilder.Sql("DROP PROCEDURE dbo.CarritoUPD");
             //migrationBuilder.Sql("DROP FUNCTION dbo.GetTopClientes");
             ////migrationBuilder.Sql("DROP FUNCTION dbo.GetTopProductos");
             ////migrationBuilder.Sql("DROP FUNCTION dbo.GetTopVendedores");

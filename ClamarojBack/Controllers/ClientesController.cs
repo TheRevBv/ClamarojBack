@@ -81,6 +81,29 @@ namespace ClamarojBack.Controllers
             return Ok(cliente[0]);
         }
 
+        // GET: api/Clientes/Usuario/5
+        [HttpGet("Usuario/{id}")]
+        public async Task<ActionResult<ClienteDto>> GetClienteByUser(int id)
+        {
+            if (_context.Clientes == null)
+            {
+                return NotFound();
+            }
+            // var cliente = await _context.Clientes.FindAsync(id);            
+            var cliente = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetClienteByUsuario",
+            new SqlParameter[] {
+                new("@IdUsuario", id)
+            });
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(cliente[0]);
+        }
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCliente(int id, Cliente clienteDTO)
         {

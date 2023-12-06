@@ -72,6 +72,12 @@ namespace ClamarojBack.Controllers
                 new("@Id", id)
             });
 
+            var roles = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetRolesUsuario", new SqlParameter[] {
+                new("@IdUsuario", id)
+            });
+
+            usuario[0]["roles"] = roles;
+
 
             if (usuario == null)
             {
