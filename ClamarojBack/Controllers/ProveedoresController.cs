@@ -107,14 +107,6 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            if (proveedor.Usuario.Password != proveedorDB.Usuario.Password)
-            {
-                proveedor.Usuario.Password = encriptador.HashPassword(proveedor.Usuario.Password);
-            }
-            else
-            {
-                proveedor.Usuario.Password = proveedorDB.Usuario.Password;
-            }
             DateTime fechaNacimiento = Convert.ToDateTime(proveedor.Usuario.FechaNacimiento);
             try
             {
@@ -172,7 +164,7 @@ namespace ClamarojBack.Controllers
                     new SqlParameter("@Nombre", proveedor.Usuario.Nombre),
                     new SqlParameter("@Apellido", proveedor.Usuario.Apellido),
                     new SqlParameter("@Correo", proveedor.Usuario.Correo),
-                    new SqlParameter("@Password", encriptador.HashPassword(proveedor.Usuario.Password)),
+                    new SqlParameter("@Password", proveedor.Usuario.Password),
                     new SqlParameter("@FechaNacimiento", fechaNac),
                     new SqlParameter("@Foto", proveedor.Usuario.Foto),
                     new SqlParameter("@IdStatus", proveedor.Usuario.IdStatus),
@@ -220,14 +212,6 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            if (proveedor.Password != proveedorDB.Usuario.Password)
-            {
-                proveedor.Password = encriptador.HashPassword(proveedor.Password!);
-            }
-            else
-            {
-                proveedor.Password = proveedorDB.Usuario.Password;
-            }
             DateTime fechaNacimiento = Convert.ToDateTime(proveedor.FechaNacimiento);
             try
             {

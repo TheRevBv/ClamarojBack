@@ -60,7 +60,7 @@ namespace ClamarojBack.Utils
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             using SqlConnection connection = new(connectionString);
             using var command = connection.CreateCommand();
-            var commandText = $"SELECT * FROM {functionName}(";
+            var commandText = $"SELECT {functionName}(";
 
             if (parameters != null)
             {

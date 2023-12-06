@@ -1,14 +1,17 @@
 ﻿using ClamarojBack.Context;
+using ClamarojBack.Dtos;
 using ClamarojBack.Models;
-using ClamarojBack.Models.Responses;
 using ClamarojBack.Utils;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
+using System.Configuration;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace ClamarojBack.Controllers
 {
@@ -18,68 +21,75 @@ namespace ClamarojBack.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        private readonly AppDbContext context;
+        private readonly AppDbContext _context;
+        private readonly SqlUtil _sqlUtil;
         private readonly string mySecretKey;
 
-        public AuthController(AppDbContext _context, IConfiguration _configuration)
+        public AuthController(AppDbContext context, IConfiguration _configuration)
         {
-            context = _context;
+            _context = context;
             mySecretKey = _configuration.GetSection("JWT").GetSection("Key").ToString()!;
+            _sqlUtil = new SqlUtil(_configuration);
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             IActionResult response = StatusCode(401, "Usuario o contraseña incorrectos");
-            var user = await AutenticarUsuario(login);
+            var user = (UsuarioDto?)await AutenticarUsuario(login);
             if (user != null)
             {
                 var tokenString = GenerarToken(user);
-                // var rolesUsuario = await context.RolesUsuarios.Where(ru => ru.IdUsuario == user.Id).ToListAsync();
+                // var rolesUsuario = await _context.RolesUsuarios.Where(ru => ru.IdUsuario == user.Id).ToListAsync();
                 // int[] roles = rolesUsuario.Select(ru => ru.IdRol).ToArray();
-                var roles2 = await context.RolesUsuarios
-                .Where(ru => ru.IdUsuario == user.Id)
-                .Join(context.Roles, ru => ru.IdRol, r => r.Id, (ru, r) => new IRolRes { Id = r.Id, Nombre = r.Nombre, Descripcion = r.Descripcion })
-                .ToListAsync();
+                var roles = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetRolesUsuario", new SqlParameter[] {
+                    new("@IdUsuario", user.Id)
+                });
 
-                var usuario = new IUsuarioRes
-                {
-                    Id = user.Id,
-                    Nombre = user.Nombre,
-                    Apellido = user.Apellido,
-                    Correo = user.Correo,
-                    Foto = user.Foto,
-                    FechaNacimiento = user.FechaNacimiento,
-                    FechaRegistro = user.FechaRegistro,
-                    IdStatus = user.IdStatus,
-                    // Roles = roles
-                    Roles = roles2
-                };
+                var rolesUsuario = Newtonsoft.Json.JsonConvert.SerializeObject(roles);
+                var rolesDto = JsonConvert.DeserializeObject<RolDto[]>(rolesUsuario);
 
-                response = StatusCode(200, new { token = tokenString, usuario });
+                user.Roles = rolesDto!;
+
+                response = StatusCode(200, new { token = tokenString, usuario = user });
             }
             return response;
         }
 
         [HttpPost("registrar")]
-        public IActionResult Registrar([FromBody] Usuario usuario)
+        public async Task<IActionResult> RegistrarAsync([FromBody] UsuarioDto usuario)
         {
             var encriptador = new SecurityUtil();
             IActionResult response = StatusCode(401, "No se pudo registrar el usuario");
-            var usuarioEncontrado = context.Usuarios.Where(u => u.Correo == usuario.Correo).FirstOrDefault();
+            var usuarioEncontrado = _context.Usuarios.Where(u => u.Correo == usuario.Correo).FirstOrDefault();
             if (usuarioEncontrado == null)
             {
-                //Encriptar password
-                var contrasena = encriptador.HashPassword(usuario.Password);
-                usuario.Password = contrasena;
-                context.Usuarios.Add(usuario);
-                context.SaveChanges();
+                DateTime fechaNacimiento = Convert.ToDateTime(usuario.FechaNacimiento);
+                //Convertir Arreglo de roles a cadena separada por comas
+                string roles = "";
+                foreach (var rol in usuario.Roles)
+                {
+                    roles += rol.Id + ",";
+                }
+
+                await _sqlUtil.CallSqlProcedureAsync("dbo.UsuariosUPD", new SqlParameter[]{
+                    new("@Id", usuario.Id),
+                    new("@Nombre", usuario.Nombre),
+                    new("@Apellido", usuario.Apellido),
+                    new("@Correo", usuario.Correo),
+                    //new("@Password", encriptador.HashPassword(usuario.Password!)),
+                    new("@Password", usuario.Password),
+                    new("@FechaNacimiento", fechaNacimiento),
+                    new("@Foto", usuario.Foto),
+                    new("@IdRoles" , roles),
+                    new("@IdStatus", usuario.IdStatus)
+                });
                 response = StatusCode(200, new { mensaje = "Usuario registrado correctamente" });
             }
             return response;
         }
 
-        private async Task<Usuario?> AutenticarUsuario(Login login)
+        private async Task<UsuarioDto?> AutenticarUsuario(Login login)
         {
             try
             {
@@ -90,16 +100,31 @@ namespace ClamarojBack.Controllers
                     return null;
                 }
                 //Encriptar password
-                var contrasena = encriptador.HashPassword(login.Password);
+                // var contrasena = encriptador.HashPassword(login.Password);
 
-                var usuarioEncontrado = await context.Usuarios.Where(u => u.Correo == login.Correo && u.Password == contrasena).FirstOrDefaultAsync();
-
-
-                if (usuarioEncontrado != null)
+                // var usuarioEncontrado = await _context.Usuarios.Where(u => u.Correo == login.Correo && u.Password == contrasena).FirstOrDefaultAsync();
+                var usuarioEncontrado = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxLoginUsuario", new SqlParameter[]
                 {
-                    return usuarioEncontrado;
+                    new("@Correo", login.Correo),
+                    new("@Password", login.Password)
+                });
+
+
+                if (Equals(usuarioEncontrado, null))
+                {
+                    return null;
                 }
-                return null;
+                else
+                {
+                    var data = usuarioEncontrado[0];
+
+                    var usuario = Newtonsoft.Json.JsonConvert.SerializeObject(data);
+
+                    var usuarioDto = JsonConvert.DeserializeObject<UsuarioDto>(usuario);
+
+                    return usuarioDto;
+                }
+
             }
             catch (System.Exception ex)
             {
@@ -107,17 +132,18 @@ namespace ClamarojBack.Controllers
             }
         }
 
-        private string GenerarToken(Usuario usuario)
+        private string GenerarToken(object usuario)
         {
             try
             {
+                var user = (UsuarioDto)usuario;
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var llave = Encoding.ASCII.GetBytes(mySecretKey);
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
                     Subject = new ClaimsIdentity(new Claim[]
                     {
-                        new Claim(ClaimTypes.NameIdentifier, usuario.Correo!),
+                        new Claim(ClaimTypes.NameIdentifier, user.Correo!.ToString()),
                     }),
                     Expires = DateTime.UtcNow.AddDays(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(llave), SecurityAlgorithms.HmacSha256Signature)

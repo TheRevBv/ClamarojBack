@@ -68,25 +68,9 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            var usuario = await _context.Usuarios
-                .Where(u => u.Id == id)
-                .Select(u => new UsuarioDto
-                {
-                    Id = u.Id,
-                    Nombre = u.Nombre,
-                    Apellido = u.Apellido,
-                    Correo = u.Correo,
-                    Password = u.Password,
-                    FechaNacimiento = u.FechaNacimiento,
-                    Foto = u.Foto,
-                    IdStatus = u.IdStatus,
-                    Roles = u.RolesUsuario.Select(ru => new RolDto
-                    {
-                        Id = ru.IdRol,
-                        Nombre = ru.Rol.Nombre
-                    }).ToList()
-                })
-                .FirstOrDefaultAsync();
+            var usuario = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetUsuario", new SqlParameter[] {
+                new("@Id", id)
+            });
 
 
             if (usuario == null)
@@ -94,7 +78,7 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            return usuario;
+            return Ok(usuario[0]);
         }
 
         // PUT: api/Usuarios/5
@@ -108,16 +92,6 @@ namespace ClamarojBack.Controllers
                 return BadRequest();
             }
 
-            var usuarioDb = await _context.Usuarios.FindAsync(id);
-
-            if (usuario.Password != usuarioDb!.Password)
-            {
-                usuario.Password = encriptador.HashPassword(usuario.Password!);
-            }
-            else
-            {
-                usuario.Password = usuarioDb.Password;
-            }
             DateTime fechaNacimiento = Convert.ToDateTime(usuario.FechaNacimiento);
             //Convertir Arreglo de roles a cadena separada por comas
             string roles = "";
@@ -182,7 +156,8 @@ namespace ClamarojBack.Controllers
                 new("@Nombre", usuario.Nombre),
                 new("@Apellido", usuario.Apellido),
                 new("@Correo", usuario.Correo),
-                new("@Password", encriptador.HashPassword(usuario.Password!)),
+                //new("@Password", encriptador.HashPassword(usuario.Password!)),
+                new("@Password", usuario.Password),
                 new("@FechaNacimiento", fechaNacimiento),
                 new("@Foto", usuario.Foto),
                 new("@IdRoles" , roles),

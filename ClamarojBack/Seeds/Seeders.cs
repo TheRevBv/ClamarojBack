@@ -1,6 +1,7 @@
 ﻿using ClamarojBack.Context;
 using ClamarojBack.Models;
 using ClamarojBack.Utils;
+using System.Text;
 
 namespace ClamarojBack
 {
@@ -69,8 +70,8 @@ namespace ClamarojBack
                         Nombre = "Administrador",
                         Apellido = "Administrador",
                         Correo = "admin@clamaroj.com",
-                        Password = security.HashPassword("Admin123"),
-                        FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                        Password = Encoding.ASCII.GetBytes("Admin123"),
+                        FechaNacimiento = Convert.ToDateTime("01/01/2000"),
                         FechaRegistro = DateTime.Now,
                         IdStatus = 1
                     }
@@ -98,8 +99,8 @@ namespace ClamarojBack
                     Nombre = "Proveedor",
                     Apellido = "Proveedor",
                     Correo = "proveedortest@test.com",
-                    Password = security.HashPassword("Proveedor123"),
-                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                    Password = Encoding.ASCII.GetBytes("Proveedor123"),
+                    FechaNacimiento = Convert.ToDateTime("01/01/2000"),
                     FechaRegistro = DateTime.Now,
                     IdStatus = 1
                 };
@@ -129,8 +130,8 @@ namespace ClamarojBack
                     Nombre = "Cliente",
                     Apellido = "Cliente",
                     Correo = "clienteprueba@test.com",
-                    Password = security.HashPassword("Cliente123"),
-                    FechaNacimiento = Convert.ToDateTime("01/01/1900"),
+                    Password = Encoding.ASCII.GetBytes("Cliente123"),
+                    FechaNacimiento = Convert.ToDateTime("01/01/2000"),
                     FechaRegistro = DateTime.Now,
                     IdStatus = 1
                 };

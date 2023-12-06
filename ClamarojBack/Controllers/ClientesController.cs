@@ -97,14 +97,6 @@ namespace ClamarojBack.Controllers
                 return NotFound();
             }
 
-            if (clienteDTO.Usuario.Password != clienteDB.Usuario.Password)
-            {
-                clienteDTO.Usuario.Password = encriptador.HashPassword(clienteDTO.Usuario.Password);
-            }
-            else
-            {
-                clienteDTO.Usuario.Password = clienteDB.Usuario.Password;
-            }
             DateTime fechaNacimiento = Convert.ToDateTime(clienteDTO.Usuario.FechaNacimiento);
 
             try
@@ -165,7 +157,7 @@ namespace ClamarojBack.Controllers
                 new("@Nombre", client.Usuario.Nombre),
                 new("@Apellido", client.Usuario.Apellido),
                 new("@Correo", client.Usuario.Correo),
-                new("@Password", encriptador.HashPassword(client.Usuario.Password)),
+                new("@Password", client.Usuario.Password),
                 new("@Foto", client.Usuario.Foto),
                 new("@FechaNacimiento", fechaNacimiento),
                 new("@IdStatus", client.Usuario.IdStatus),
