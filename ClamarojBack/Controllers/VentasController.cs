@@ -84,6 +84,8 @@ namespace ClamarojBack.Controllers
             return NoContent();
         }
 
+
+
         // POST: api/Ventas
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -123,5 +125,38 @@ namespace ClamarojBack.Controllers
         {
             return (_context.Ventas?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        // PUT: api/Ventas/merma
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut]
+        public async Task<IActionResult> PutMerma(Venta venta)
+        {
+            if (venta == null)
+            {
+                return BadRequest();
+            }
+
+            try
+            {
+                await _sqlUtil.CallSqlProcedureAsync("dbo.MermasUPD", new SqlParameter[]
+                {
+                    new SqlParameter("@IdPedido", venta.IdPedido)
+                });
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!VentaExists(venta.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
     }
 }
