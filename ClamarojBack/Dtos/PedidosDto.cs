@@ -11,9 +11,9 @@
         public string? Telefono { get; set; }
         public string? RazonSocial { get; set; }
         public string? Rfc { get; set; }
-        public char TipoPago { get; set; }
-        public char TipoEnvio { get; set; }
-        public char TipoPedido { get; set; }
+        public char? TipoPago { get; set; }
+        public char? TipoEnvio { get; set; }
+        public char? TipoPedido { get; set; }
         public decimal Total { get; set; }
         public ICollection<DetallePedidoDto> DetallesPedidos { get; set; } = new List<DetallePedidoDto>();
     }
