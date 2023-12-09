@@ -246,6 +246,38 @@ namespace ClamarojBack.Controllers
             return CreatedAtAction("GetPedido", new { id = pedidoDto!.IdPedido }, pedidoDto);
         }
 
+        // POST: api/sendPedido/5
+        [HttpPost("sendPedido/{id}")]
+        public async Task<ActionResult<Pedido>> SendPedido(int id)
+        {
+            if (_context.Pedidos == null)
+            {
+                return Problem("Entity set 'AppDbContext.Pedidos'  is null.");
+            }
+            //_context.Pedidos.Add(pedido);
+            try
+            {
+                //await _context.SaveChangesAsync();
+                await _sqlUtil.CallSqlProcedureAsync("dbo.ActualizarPedido", new SqlParameter[]
+                {
+                    new("@IdPedido",id)
+                });
+            }
+            catch (DbUpdateException)
+            {
+                if (PedidoExists(id))
+                {
+                    return Conflict();
+                }
+                else
+                {
+                    throw new Exception("Error al actualizar el pedido");
+                }
+            }
+
+            return Ok();
+        }
+
         // DELETE: api/Pedidos/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePedido(int id)
