@@ -36,7 +36,7 @@ namespace ClamarojBack.Controllers
         public async Task<IActionResult> Login([FromBody] Login login)
         {
             IActionResult response = StatusCode(401, "Usuario o contraseña incorrectos");
-            var user = (UsuarioDto?)await AutenticarUsuario(login);
+            var user = await AutenticarUsuario(login);
             if (user != null)
             {
                 var tokenString = GenerarToken(user);
@@ -64,7 +64,7 @@ namespace ClamarojBack.Controllers
             var usuarioEncontrado = _context.Usuarios.Where(u => u.Correo == usuario.Correo).FirstOrDefault();
             if (usuarioEncontrado == null)
             {
-                DateTime fechaNacimiento = Convert.ToDateTime(usuario.FechaNacimiento);
+                usuario.FechaNacimiento = Convert.ToDateTime(usuario.FechaNacimiento);
                 //Convertir Arreglo de roles a cadena separada por comas
                 string roles = "";
                 foreach (var rol in usuario.Roles)
@@ -79,12 +79,12 @@ namespace ClamarojBack.Controllers
                     new("@Correo", usuario.Correo),
                     //new("@Password", encriptador.HashPassword(usuario.Password!)),
                     new("@Password", usuario.Password),
-                    new("@FechaNacimiento", fechaNacimiento),
+                    new("@FechaNacimiento", usuario.FechaNacimiento),
                     new("@Foto", usuario.Foto),
                     new("@IdRoles" , roles),
                     new("@IdStatus", usuario.IdStatus)
                 });
-                response = StatusCode(200, new { mensaje = "Usuario registrado correctamente" });
+                response = StatusCode(200, new { mensaje = "Usuario registrado correctamente", usuario });
             }
             return response;
         }
@@ -108,23 +108,14 @@ namespace ClamarojBack.Controllers
                     new("@Correo", login.Correo),
                     new("@Password", login.Password)
                 });
-
-
-                if (Equals(usuarioEncontrado, null))
+                //Validar si la lista no esta vacia
+                if (usuarioEncontrado != null && usuarioEncontrado.Count > 0)
                 {
-                    return null;
+                    var usuarioDto = JsonConvert.SerializeObject(usuarioEncontrado[0]);
+                    var usuario = JsonConvert.DeserializeObject<UsuarioDto>(usuarioDto);
+                    return usuario;
                 }
-                else
-                {
-                    var data = usuarioEncontrado[0];
-
-                    var usuario = Newtonsoft.Json.JsonConvert.SerializeObject(data);
-
-                    var usuarioDto = JsonConvert.DeserializeObject<UsuarioDto>(usuario);
-
-                    return usuarioDto;
-                }
-
+                return null;
             }
             catch (System.Exception ex)
             {
