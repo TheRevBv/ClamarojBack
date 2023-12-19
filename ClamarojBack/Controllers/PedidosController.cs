@@ -70,7 +70,7 @@ namespace ClamarojBack.Controllers
             {
                 return NotFound();
             }
-            //var pedido = await _context.Pedidos.FindAsync(id);
+
             var pedido = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetPedidosByUsuario", new SqlParameter[]
             {
                 new SqlParameter("@Id",id)
@@ -92,62 +92,38 @@ namespace ClamarojBack.Controllers
                 return BadRequest();
             }
 
-            //_context.Entry(pedido).State = EntityState.Modified;
-
             try
             {
-                //await _context.SaveChangesAsync();
                 await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
                 {
-                    new SqlParameter("@Id",pedido.IdPedido),
-                    new SqlParameter("@IdUsuario",pedido.IdUsuario),
-                    new SqlParameter("@IdStatus", pedido.IdStatus),
-                    new SqlParameter("@Fecha",pedido.Fecha),
-                    new SqlParameter("@FechaEntrega", pedido.FechaEntrega),
-                    new SqlParameter("@Domicilio", pedido.Domicilio),
-                    new SqlParameter("@Telefono", pedido.Telefono),
-                    new SqlParameter("@RazonSocial", pedido.RazonSocial),
-                    new SqlParameter("@Rfc", pedido.Rfc),
-                    new SqlParameter("TipoPago", pedido.TipoPago),
-                    new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
-                    new SqlParameter("@TipoPedido", pedido.TipoPedido),
-                    new SqlParameter("@Total",pedido.Total),
+                    new("@Id",pedido.IdPedido),
+                    new("@IdUsuario",pedido.IdUsuario),
+                    new("@IdStatus", pedido.IdStatus),
+                    new("@Fecha",pedido.Fecha),
+                    new("@FechaEntrega", pedido.FechaEntrega),
+                    new("@Domicilio", pedido.Domicilio),
+                    new("@Telefono", pedido.Telefono),
+                    new("@RazonSocial", pedido.RazonSocial),
+                    new("@Rfc", pedido.Rfc),
+                    new("TipoPago", pedido.TipoPago),
+                    new("@TipoEnvio", pedido.TipoEnvio),
+                    new("@TipoPedido", pedido.TipoPedido),
+                    new("@Total",pedido.Total),
                 });
-
-                //var pedidoINS = _context.Pedidos.OrderByDescending(p => p.IdPedido).FirstOrDefault();
-                decimal total = 0;
-
+                
                 pedido.DetallesPedidos.ToArray().ToList().ForEach(async detallePedido =>
                 {
                     await _sqlUtil.CallSqlProcedureAsync("dbo.DetallePedidosUPD", new SqlParameter[]
                     {
-                        new SqlParameter("@Id", detallePedido.IdDetallePedido),
-                        new SqlParameter("@IdPedido", pedido.IdPedido),
-                        new SqlParameter("@Fecha", pedido.Fecha),
-                        new SqlParameter("@IdProducto", detallePedido.IdProducto),
-                        new SqlParameter("@Cantidad", detallePedido.Cantidad),
-                        new SqlParameter("@PrecioUnitario", detallePedido.PrecioUnitario),
-                        new SqlParameter("@Subtotal", detallePedido.Subtotal)
+                        new("@Id", detallePedido.IdDetallePedido),
+                        new("@IdPedido", pedido.IdPedido),
+                        new("@Fecha", pedido.Fecha),
+                        new("@IdProducto", detallePedido.IdProducto),
+                        new("@Cantidad", detallePedido.Cantidad),
+                        new("@PrecioUnitario", detallePedido.PrecioUnitario),
+                        new("@Subtotal", detallePedido.Subtotal)
                     });
-                    total += detallePedido.Subtotal;
                 });
-
-                //await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
-                //{
-                //    new SqlParameter("@Id",pedido!.IdPedido),
-                //    new SqlParameter("@IdUsuario",pedido.IdUsuario),
-                //    new SqlParameter("@IdStatus", pedido.IdStatus),
-                //    new SqlParameter("@Fecha", pedido.Fecha),
-                //    new SqlParameter("@FechaEntrega", pedido.FechaEntrega),
-                //    new SqlParameter("@Domicilio", pedido.Domicilio),
-                //    new SqlParameter("@Telefono", pedido.Telefono),
-                //    new SqlParameter("@RazonSocial", pedido.RazonSocial),
-                //    new SqlParameter("@Rfc", pedido.Rfc),
-                //    new SqlParameter("TipoPago", pedido.TipoPago),
-                //    new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
-                //    new SqlParameter("@TipoPedido", pedido.TipoPedido),
-                //    new SqlParameter("@Total",total),
-                //});
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -157,7 +133,7 @@ namespace ClamarojBack.Controllers
                 }
                 else
                 {
-                    throw;
+                    throw new Exception("Error al actualizar el pedido");
                 }
             }
 
@@ -173,62 +149,49 @@ namespace ClamarojBack.Controllers
             {
                 return Problem("Entity set 'AppDbContext.Pedidos'  is null.");
             }
-            //_context.Pedidos.Add(pedido);
+
+            var pedidoDto = new PedidosDto();
+
             try
             {
-                //await _context.SaveChangesAsync();
                 await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
                 {
-                    new SqlParameter("@Id",pedido.IdPedido),
-                    new SqlParameter("@IdUsuario",pedido.IdUsuario),
-                    new SqlParameter("@IdStatus", pedido.IdStatus),
-                    new SqlParameter("@Fecha",pedido.Fecha),
-                    new SqlParameter("@FechaEntrega", pedido.FechaEntrega),
-                    new SqlParameter("@Domicilio", pedido.Domicilio),
-                    new SqlParameter("@Telefono", pedido.Telefono),
-                    new SqlParameter("@RazonSocial", pedido.RazonSocial),
-                    new SqlParameter("@Rfc", pedido.Rfc),
-                    new SqlParameter("TipoPago", pedido.TipoPago),
-                    new SqlParameter("@TipoEnvio", pedido.TipoEnvio),
-                    new SqlParameter("@TipoPedido", pedido.TipoPedido),
-                    new SqlParameter("@Total",pedido.Total),
+                    new("@Id",pedido.IdPedido),
+                    new("@IdUsuario",pedido.IdUsuario),
+                    new("@IdStatus", pedido.IdStatus),
+                    new("@Fecha",pedido.Fecha),
+                    new("@FechaEntrega", pedido.FechaEntrega),
+                    new("@Domicilio", pedido.Domicilio),
+                    new("@Telefono", pedido.Telefono),
+                    new("@RazonSocial", pedido.RazonSocial),
+                    new("@Rfc", pedido.Rfc),
+                    new("TipoPago", pedido.TipoPago),
+                    new("@TipoEnvio", pedido.TipoEnvio),
+                    new("@TipoPedido", pedido.TipoPedido),
+                    new("@Total",pedido.Total),
                 });
 
-                var pedidoINS = _context.Pedidos.OrderByDescending(p => p.IdPedido).FirstOrDefault();
-                decimal total = 0;
+                pedidoDto = await _context.Pedidos.Select((p) => new PedidosDto
+                {
+                    IdPedido = p.IdPedido,
+                    Fecha = p.Fecha
+                }).OrderByDescending(p => p.IdPedido).FirstOrDefaultAsync();
 
                 pedido.DetallesPedidos.ToArray().ToList().ForEach(async detallePedido =>
                 {
                     await _sqlUtil.CallSqlProcedureAsync("dbo.DetallePedidosUPD", new SqlParameter[]
                     {
-                        new SqlParameter("@Id", detallePedido.IdDetallePedido),
-                        new SqlParameter("@IdPedido", pedidoINS!.IdPedido),
-                        new SqlParameter("@Fecha", pedidoINS.Fecha),
-                        new SqlParameter("@IdProducto", detallePedido.IdProducto),
-                        new SqlParameter("@Cantidad", detallePedido.Cantidad),
-                        new SqlParameter("@PrecioUnitario", detallePedido.PrecioUnitario),
-                        new SqlParameter("@Subtotal", detallePedido.Subtotal)
+                        new("@Id", detallePedido.IdDetallePedido),
+                        new("@IdPedido", pedidoDto?.IdPedido),
+                        new("@Fecha", pedidoDto?.Fecha),
+                        new("@IdProducto", detallePedido.IdProducto),
+                        new("@Cantidad", detallePedido.Cantidad),
+                        new("@PrecioUnitario", detallePedido.PrecioUnitario),
+                        new("@Subtotal", detallePedido.Subtotal)
                     });
-                    total += detallePedido.Subtotal;
                 });
-
-                //await _sqlUtil.CallSqlProcedureAsync("dbo.PedidosUPD", new SqlParameter[]
-                //{
-                //    new SqlParameter("@Id",pedidoINS!.IdPedido),
-                //    new SqlParameter("@IdUsuario",pedidoINS.IdUsuario),
-                //    new SqlParameter("@IdStatus", pedidoINS.IdStatus),
-                //    new SqlParameter("@Fecha", pedidoINS.Fecha),
-                //    new SqlParameter("@FechaEntrega", pedidoINS.FechaEntrega),
-                //    new SqlParameter("@Domicilio", pedidoINS.Domicilio),
-                //    new SqlParameter("@Telefono", pedidoINS.Telefono),
-                //    new SqlParameter("@RazonSocial", pedidoINS.RazonSocial),
-                //    new SqlParameter("@Rfc", pedidoINS.Rfc),
-                //    new SqlParameter("TipoPago", pedidoINS.TipoPago),
-                //    new SqlParameter("@TipoEnvio", pedidoINS.TipoEnvio),
-                //    new SqlParameter("@TipoPedido", pedidoINS.TipoPedido),
-                //    new SqlParameter("@Total",total),
-                //});
             }
+
             catch (DbUpdateException)
             {
                 if (PedidoExists(pedido.IdPedido))
@@ -237,13 +200,11 @@ namespace ClamarojBack.Controllers
                 }
                 else
                 {
-                    throw;
+                    throw new Exception("Error al crear el pedido");
                 }
             }
 
-            var pedidoDto = _context.Pedidos.OrderByDescending(p => p.IdPedido).FirstOrDefault();
-
-            return CreatedAtAction("GetPedido", new { id = pedidoDto!.IdPedido }, pedidoDto);
+            return CreatedAtAction("GetPedido", new { id = pedido.IdPedido }, pedido);
         }
 
         // POST: api/sendPedido/5

@@ -41,6 +41,22 @@ namespace ClamarojBack.Controllers
             return Ok(detallePedido);
         }
 
+        // GET: api/DetallePedidos/Dto/idPedido/1
+        [HttpGet("Dto/{idPedido}")]
+        public async Task<ActionResult<IEnumerable<DetallePedido>>> GetDetallesPedidoDto(int idPedido)
+        {
+            if (_context.DetallePedidos == null)
+            {
+                return NotFound();
+            }
+            var detallePedido = await _sqlUtil.CallSqlFunctionDataAsync("dbo.fxGetDetallesPedidoLST", new SqlParameter[]
+            {
+                new SqlParameter("@IdPedido", idPedido)
+            });
+
+            return Ok(detallePedido);
+        }
+
         //GET: api/DetallePedido/idPedido/1
         [HttpGet("{idPedido}/{id}")]
         public async Task<ActionResult> GetDetallePedido(int idPedido, int id)
