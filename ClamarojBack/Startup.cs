@@ -23,9 +23,9 @@ namespace ClamarojBack
             services.AddHttpContextAccessor();
             //=====Cors Rules
             var misReglasCors = "ReglasCorsAngular";
-            _ = services.AddCors(options =>
+            services.AddCors(options =>
             {
-                string[] corsUrls = Configuration.GetSection("Cors").GetSection("Urls").Get<string[]>()!;
+                string[] corsUrls = Configuration.GetSection("Cors").GetSection("Urls").Get<string[]>();
                 options.AddPolicy(misReglasCors,
                     builder =>
                     {
