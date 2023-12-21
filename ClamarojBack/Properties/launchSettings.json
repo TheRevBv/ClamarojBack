@@ -12,11 +12,11 @@
     "ClamarojBack": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api",
+      "launchUrl": "swagger",
       // "applicationUrl": "http://192.168.100.158:7092",
       "applicationUrl": "http://localhost:7092",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Production"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       },
       "dotnetRunMessages": true
     },

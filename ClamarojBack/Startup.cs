@@ -104,11 +104,11 @@ namespace ClamarojBack
         {
             Console.WriteLine("COnfigure inicializado");
 
-            if (env.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            //if (env.IsDevelopment())
+            //{
+            app.UseSwagger();
+            app.UseSwaggerUI();
+            //}
 
 
             app.UseHttpsRedirection();
