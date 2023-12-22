@@ -4,21 +4,20 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:36086",
-      "sslPort": 44321
+      "applicationUrl": "http://localhost:23840",
+      "sslPort": 44320
     }
   },
   "profiles": {
     "ClamarojBack": {
       "commandName": "Project",
+      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
-      // "applicationUrl": "http://192.168.100.158:7092",
-      "applicationUrl": "http://localhost:7092",
+      "applicationUrl": "https://localhost:7005;http://localhost:5128",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      },
-      "dotnetRunMessages": true
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",

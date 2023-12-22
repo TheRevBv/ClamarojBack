@@ -25,7 +25,7 @@ namespace ClamarojBack
             var misReglasCors = "ReglasCorsAngular";
             services.AddCors(options =>
             {
-                string[] corsUrls = Configuration.GetSection("Cors").GetSection("Urls").Get<string[]>();
+                string[] corsUrls = Configuration.GetSection("Cors").GetSection("Urls").Get<string[]>()!;
                 options.AddPolicy(misReglasCors,
                     builder =>
                     {
@@ -104,12 +104,12 @@ namespace ClamarojBack
         {
             Console.WriteLine("COnfigure inicializado");
 
-            //if (env.IsDevelopment())
-            //{
             app.UseSwagger();
             app.UseSwaggerUI();
-            //}
 
+            //if (env.IsDevelopment())
+            //{
+            //}
 
             app.UseHttpsRedirection();
 
